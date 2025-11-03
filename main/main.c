@@ -58,7 +58,8 @@ void app_main() {
 
   if (0 == memcmp ( mac_address, mac_corridor, sizeof(mac_address) )) {
     // ---------------- DEVICE: corridor ------------------------------
-    ESP_LOGI("INFO", "DEVICE: corridor");
+    char roomID[] = "corridor";
+    ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // Battery status code
     ESP_LOGI("progress", "Sending battery status to MQTT");
@@ -66,14 +67,15 @@ void app_main() {
     
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
-    sendPIReventToMQTT();
+    sendPIReventToMQTT(roomID);
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
-    ESP_LOGI("INFO", "DEVICE: bathroom");
+    char roomID[] = "bathroom";
+    ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
-    sendPIReventToMQTT();
+    sendPIReventToMQTT(roomID);
   } else {
     // ---------------- Error handling: Unknown MAC address -----------
     ESP_LOGI("INFO", "DEVICE: UNKNOWN");

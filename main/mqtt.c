@@ -99,13 +99,13 @@ void start_mqtt(void) {
   ESP_LOGI("mqtt", "Connected to MQTT\n");
 }
 
-void sendPIReventToMQTT(void) {
+void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
 
   char msg[150];
   time(&now);
 
-  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"corridor\"}]}]}", now * 1000);
+  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
   ESP_LOGI("mqtt", "Sent <%s> to topic %s", msg, DEVICE_TOPIC);
   auto err = esp_mqtt_client_publish(mqtt_client, DEVICE_TOPIC, msg, size, 1, 0);
   if (err == -1) {

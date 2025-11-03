@@ -4,5 +4,5 @@
 #include "esp_event.h"
 
 void start_mqtt(void);
-void sendPIReventToMQTT(void);
+void sendPIReventToMQTT(char roomID[]);
 void sendBatteryStatusToMQTT(void);
