@@ -110,6 +110,21 @@ void start_mqtt(void) {
   }
 }
 
+void addPIREventToMQTT(char msg[], char roomID[]) {
+  time_t now = 0;
+  time(&now);
+
+  char new_msg[150];
+  snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
+
+  if (strlen(msg) == 0) {
+    snprintf(msg + strlen(msg), sizeof(new_msg),  new_msg);
+  } else {
+    snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
+  }
+  //TODO: check if (strlen(msg) > 1350) then send MQTT and clear msg
+}
+
 void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
   char msg[150];

@@ -52,6 +52,9 @@ void app_main() {
   ESP_LOGI("progress", "Starting MQTT");
   start_mqtt();
 
+  // Init MQTT message
+  char msg[1500] = "";
+
   // Identity check
   unsigned char mac_corridor[] = "64:b7:08:6e:ae:bc";
   unsigned char mac_bathroom[] = "94:b9:7e:54:d3:00";
