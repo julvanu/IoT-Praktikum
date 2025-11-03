@@ -2,6 +2,7 @@
 #include "freertos/task.h"
 
 #include "wifi.h"
+#include "controlflow.h"
 
 #include "esp_log.h"
 #include "esp_system.h"
@@ -81,9 +82,7 @@ void start_wifi(void) {
     } else {
       ESP_LOGE("wifi", "UNEXPECTED EVENT");
     }
-    esp_sleep_enable_timer_wakeup(1800000000) // wakeup after 30 minutes
-    ESP_LOGI("progress", "Going to sleep for 30 minutes, then try again");
-    esp_deep_sleep_start();
+    sleep_minutes(30);
     // esp_restart();
   }
 
