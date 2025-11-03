@@ -26,6 +26,7 @@ void app_main() {
   esp_log_level_set("progress", ESP_LOG_INFO);
   esp_log_level_set("gauge", ESP_LOG_INFO);
   esp_log_level_set("INFO", ESP_LOG_INFO);
+  esp_log_level_set("DEBUG", ESP_LOG_DEBUG);
 
   // getRSOC(); //only if battery!
   esp_err_t ret = nvs_flash_init();
@@ -53,7 +54,7 @@ void app_main() {
   start_mqtt();
 
   // Init MQTT message
-  char msg[1500] = "";
+  char msg[1500];
 
   // Identity check
   unsigned char mac_corridor[] = "64:b7:08:6e:ae:bc";
@@ -70,6 +71,9 @@ void app_main() {
     
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
+    addPIREventToMQTT(msg, roomID);
+    addPIREventToMQTT(msg, roomID);
+    ESP_LOGD("DEBUG", "Accumulated double MQTT msg: %s", msg);
     sendPIReventToMQTT(roomID);
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
