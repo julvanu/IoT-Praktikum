@@ -75,12 +75,16 @@ void start_wifi(void) {
    * happened. */
   if (bits & WIFI_CONNECTED_BIT) {
     ESP_LOGI("wifi", "connected");
-  } else if (bits & WIFI_FAIL_BIT) {
-    ESP_LOGI("wifi", "Failed to connect");
-    esp_restart();
   } else {
-    ESP_LOGE("wifi", "UNEXPECTED EVENT");
-    esp_restart();
+    if (bits & WIFI_FAIL_BIT) {
+      ESP_LOGI("wifi", "Failed to connect");
+    } else {
+      ESP_LOGE("wifi", "UNEXPECTED EVENT");
+    }
+    esp_sleep_enable_timer_wakeup(1800000000) // wakeup after 30 minutes
+    ESP_LOGI("progress", "Going to sleep for 30 minutes, then try again");
+    esp_deep_sleep_start();
+    // esp_restart();
   }
 
   ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler));
