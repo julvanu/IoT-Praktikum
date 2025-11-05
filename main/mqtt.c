@@ -31,7 +31,6 @@ EventGroupHandle_t mqtt_event_group;
 static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
-const static int CONNECTION_FAILED_BIT = BIT1;
 
 void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
   esp_mqtt_event_t *data = (esp_mqtt_event_t *)event_data;
@@ -97,15 +96,11 @@ void start_mqtt(void) {
   esp_mqtt_client_start(mqtt_client);
   ESP_LOGI("mqtt", "Note free memory: %d bytes", esp_get_free_heap_size());
   ESP_LOGI("mqtt", "Waiting for connection to MQTT\n");
-  EventBits_t bits = xEventGroupWaitBits(mqtt_event_group, CONNECTED_BIT | CONNECTION_FAILED_BIT, false, true, portMAX_DELAY);
+  EventBits_t bits = xEventGroupWaitBits(mqtt_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
   if (bits & CONNECTED_BIT) {
     ESP_LOGI("mqtt", "Connected to MQTT\n");
   } else {
-    if (bits & CONNECTION_FAILED_BIT) {
-      ESP_LOGI("mqtt", "Connection to MQTT failed\n");
-    } else {
-      ESP_LOGI("mqtt", "Unexpected event while connecting to MQTT\n");
-    }
+    ESP_LOGI("mqtt", "Connection to MQTT failed. Going to sleep for 30 minutes, then try again.\n");
     sleep_minutes(30);    
   }
 }
