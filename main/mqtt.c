@@ -112,8 +112,9 @@ void addPIREventToMQTT(char msg[], char roomID[]) {
   char new_msg[150];
   snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
 
+  // ESP_LOGI("INFO", "msg: %s, strlen msg: %d, strlen new_msg: %d\n", msg, strlen(msg), strlen(new_msg));
   if (strlen(msg) == 0) {
-    snprintf(msg + strlen(msg), sizeof(new_msg),  new_msg);
+    snprintf(msg, sizeof(new_msg),  new_msg);
   } else {
     snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
   }
