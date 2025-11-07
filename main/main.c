@@ -27,7 +27,6 @@ void app_main() {
   esp_log_level_set("gauge", ESP_LOG_INFO);
   esp_log_level_set("INFO", ESP_LOG_INFO);
 
-  // getRSOC(); //only if battery!
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
     ESP_ERROR_CHECK(nvs_flash_erase());
@@ -65,6 +64,7 @@ void app_main() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // Battery status code
+    getRSOC();
     ESP_LOGI("progress", "Sending battery status to MQTT");
     sendBatteryStatusToMQTT();
     
