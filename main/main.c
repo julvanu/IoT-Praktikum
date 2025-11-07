@@ -74,7 +74,7 @@ void app_main() {
     // addPIREventToMQTT(msg, roomID);
     ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
     // sendMsgToMQTT(msg, roomID);
-    sendPIReventToMQTT()
+    sendPIReventToMQTT();
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
