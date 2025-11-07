@@ -70,10 +70,11 @@ void app_main() {
     
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
-    addPIREventToMQTT(msg, roomID);
-    addPIREventToMQTT(msg, roomID);
+    // addPIREventToMQTT(msg, roomID);
+    // addPIREventToMQTT(msg, roomID);
     ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
-    sendMsgToMQTT(msg, roomID);
+    // sendMsgToMQTT(msg, roomID);
+    sendPIReventToMQTT()
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
