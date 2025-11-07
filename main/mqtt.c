@@ -32,8 +32,8 @@ static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
 
-size_t max_pir_events = 20;
-time_t* pir_event_times[max_pir_events] = { NULL };
+#define MAX_PIR_EVENTS 20
+time_t* pir_event_times[MAX_PIR_EVENTS] = { NULL };
 int8_t pir_event_idx = 0;
 
 void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
@@ -116,7 +116,7 @@ void addPIREvent() {
   pir_event_idx += 1; 
 
   // if pir_event_times array full, then send events to MQTT and reset array 
-  if (pir_event_idx == max_pir_events) {
+  if (pir_event_idx == MAX_PIR_EVENTS) {
     sendPIREvents();
     pir_event_idx = 0;
   }
