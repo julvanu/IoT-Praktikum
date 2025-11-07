@@ -32,6 +32,10 @@ static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
 
+size_t max_pir_events = 20;
+time_t* pir_event_times[max_pir_events] = { NULL };
+int8_t pir_event_idx = 0;
+
 void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
   esp_mqtt_event_t *data = (esp_mqtt_event_t *)event_data;
   switch (event_id) {
@@ -105,6 +109,21 @@ void start_mqtt(void) {
   }
 }
 
+void addPIREvent() {
+  time_t now = 0;  
+  time(&now);
+  pir_event_times[pir_event_idx] = now;
+  pir_event_idx += 1; 
+
+  // if pir_event_times array full, then send events to MQTT and reset array 
+  if (pir_event_idx == max_pir_events) {
+    sendPIREvents();
+    pir_event_idx = 0;
+  }
+}
+
+void sendPIREvents() {}
+
 void addPIREventToMQTT(char msg[], char roomID[]) {
   time_t now = 0;
   time(&now);
@@ -119,6 +138,10 @@ void addPIREventToMQTT(char msg[], char roomID[]) {
     snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
   }
   //TODO: check if (strlen(msg) > 1350) then send MQTT and clear msg
+}
+
+void sendMsgToMQTT(char msg[], char roomID[]) {
+  sendToMQTT(msg, strlen(msg));
 }
 
 void sendPIReventToMQTT(char roomID[]) {
