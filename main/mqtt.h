@@ -5,6 +5,5 @@
 
 void start_mqtt(void);
 // void addPIREventToMQTT(char msg[], char roomID[]);
-// void sendMsgToMQTT(char msg[], char roomID[]);
 void sendPIReventToMQTT(char roomID[]);
 void sendBatteryStatusToMQTT(void);
