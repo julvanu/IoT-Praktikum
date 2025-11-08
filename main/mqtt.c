@@ -154,24 +154,24 @@ void sendMsgToMQTT(char msg[], char roomID[]) {
   sendToMQTT(msg, strlen(msg));
 }
 
-// void sendPIReventToMQTT(char roomID[]) {
-//   time_t now = 0;
-//   char msg[150];
-//   time(&now);
-
-//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
-//   sendToMQTT(msg, size);
-// }
-
-void sendPIReventToMQTT(void) {
+void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
   char msg[150];
   time(&now);
 
-  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"corridor\"}]}]}", now * 1000);
-  
+  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
   sendToMQTT(msg, size);
 }
+
+// void sendPIReventToMQTT(void) {
+//   time_t now = 0;
+//   char msg[150];
+//   time(&now);
+
+//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"corridor\"}]}]}", now * 1000);
+  
+//   sendToMQTT(msg, size);
+// }
 
 void sendBatteryStatusToMQTT(void) {
   time_t now = 0;

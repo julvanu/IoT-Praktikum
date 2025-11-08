@@ -74,7 +74,7 @@ void app_main() {
     // addPIREventToMQTT(msg, roomID);
     ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
     // sendMsgToMQTT(msg, roomID);
-    sendPIReventToMQTT();
+    sendPIReventToMQTT(roomID);
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
@@ -82,8 +82,8 @@ void app_main() {
     
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
-    // sendPIReventToMQTT(roomID);
-    sendPIReventToMQTT();
+    sendPIReventToMQTT(roomID);
+    // sendPIReventToMQTT();
   } else {
     // ---------------- Error handling: Unknown MAC address -----------
     ESP_LOGI("INFO", "DEVICE: UNKNOWN");
