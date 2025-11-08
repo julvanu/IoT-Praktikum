@@ -83,7 +83,6 @@ void app_main() {
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
     sendPIReventToMQTT(roomID);
-    // sendPIReventToMQTT();
   } else {
     // ---------------- Error handling: Unknown MAC address -----------
     ESP_LOGI("INFO", "DEVICE: UNKNOWN");

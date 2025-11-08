@@ -163,16 +163,6 @@ void sendPIReventToMQTT(char roomID[]) {
   sendToMQTT(msg, size);
 }
 
-// void sendPIReventToMQTT(void) {
-//   time_t now = 0;
-//   char msg[150];
-//   time(&now);
-
-//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"corridor\"}]}]}", now * 1000);
-  
-//   sendToMQTT(msg, size);
-// }
-
 void sendBatteryStatusToMQTT(void) {
   time_t now = 0;
   char msg[150];
