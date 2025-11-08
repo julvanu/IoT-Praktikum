@@ -142,8 +142,10 @@ void addPIREvent(char roomID[]) {
   time(&now);
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
+  ESP_LOGI("INFO", "Loggend PIR event. PIR event index: %d\n", pir_event_idx);
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
+    ESP_LOGI("INFO", "Max events reached: sending PIR events to MQTT\n");
     sendPIREvents(roomID);
   }
 }
@@ -166,8 +168,8 @@ void addPIREvent(char roomID[]) {
 
 void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
-  char msg[150];
   time(&now);
+  char msg[150];
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
   sendToMQTT(msg, size);
@@ -175,10 +177,43 @@ void sendPIReventToMQTT(char roomID[]) {
 
 void sendBatteryStatusToMQTT(void) {
   time_t now = 0;
-  char msg[150];
   time(&now);
+  char msg[150];
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"battery\",\"values\":[{\"timestamp\":%llu, \"voltage\":%.1f, \"soc\":%.1f}]}]}", now * 1000, voltage, rsoc);
   
+  sendToMQTT(msg, size);
+}
+
+// void handleDoorEvent() {
+//   time_t door_opened = time(NULL);
+
+//   if (gpio_get_level(DOOR_PIN)==1) {
+//     ESP_LOGI("INFO", "Waiting on the door to close.");
+//     while (gpio_get_level(DOOR_PIN)==1){
+//       vTaskDelay(pdMS_TO_TICKS(1000));
+//     }
+//   }
+//   time_t door_closed = time(NULL);
+
+//   char msg[150];
+
+//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"open\"},{\"timestamp\":%llu, \"eventType\":\"closed\"}]}]}", door_opened, door_closed);
+//   sendToMQTT(msg, size);
+// }
+
+// void sendDoorEventsToMQTT(time_t door_opened, time_t door_closed) {
+//   char msg[150];
+
+//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"open\"}, {\"timestamp\":%llu, \"eventType\":\"closed\"}]}]}", door_opened, door_closed);
+//   sendToMQTT(msg, size);
+// }
+
+void sendDoorEventToMQTT(char eventType[]) {
+  time_t now = 0;
+  time(&now);
+  char msg[150];
+
+  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", now * 1000, eventType);
   sendToMQTT(msg, size);
 }

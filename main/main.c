@@ -34,6 +34,11 @@ void app_main() {
   }
   ESP_ERROR_CHECK(ret);
 
+  // Enable PIN for door sensor
+  ESP_ERROR_CHECK(gpio_input_enable(DOOR_PIN));
+  ESP_ERROR_CHECK(gpio_set_direction(DOOR_PIN, GPIO_MODE_INPUT));
+  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(DOOR_PIN));
+
   // MAC address retrieval
   ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
   unsigned char mac_base[6] = {0};
@@ -67,11 +72,45 @@ void app_main() {
     getRSOC();
     ESP_LOGI("progress", "Sending battery status to MQTT");
     sendBatteryStatusToMQTT();
+
+    uint64_t wakeup_mask=esp_sleep_get_ext1_wakeup_status();
+    if ((wakeup_mask & (1ULL<<PIR_PIN)) !=0) {
+      ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
     
-    // PIR sensor code
-    ESP_LOGI("progress", "Sending PIR event to MQTT");
-    ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
-    sendPIReventToMQTT(roomID);
+      // PIR sensor code
+      ESP_LOGI("progress", "Sending PIR event to MQTT");
+      ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
+      sendPIReventToMQTT(roomID);
+      // addPIREvent(roomID);
+    } else {
+      ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
+
+      // // handleDoorEvent();
+      // time_t door_opened = 0;
+      // time(&door_opened);
+
+      // if (gpio_get_level(DOOR_PIN)==1) {
+      //   ESP_LOGI("INFO", "Waiting on the door to close.");
+      //   while (gpio_get_level(DOOR_PIN)==1){
+      //     vTaskDelay(pdMS_TO_TICKS(1000));
+      //   }
+      // }
+      // time_t door_closed = 0;
+      // time(&door_closed);
+
+      // sendDoorEventsToMQTT(door_opened, door_closed);
+  
+      sendDoorEventToMQTT("open");
+
+      if (gpio_get_level(DOOR_PIN)==1) {
+        ESP_LOGI("INFO", "Waiting on the door to close.");
+        while (gpio_get_level(DOOR_PIN)==1){
+          vTaskDelay(pdMS_TO_TICKS(1000));
+        }
+      }
+      
+      sendDoorEventToMQTT("closed");
+    }
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
@@ -89,11 +128,13 @@ void app_main() {
   ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
 
   // sleep and wake up
-  ESP_LOGI("progress", "Installing wakeup");
+  ESP_LOGI("progress", "Installing wakeup for PIR sensor");
   while (gpio_get_level(PIR_PIN)==1){
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
-  ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
+  // ------------------------------ WAKE UP registration --------------------------------------------------
+  ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
+
   ESP_LOGI("progress", "Going to sleep");
   esp_deep_sleep_start();
 }

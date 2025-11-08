@@ -23,3 +23,5 @@
 
 
 #define PIR_PIN 27 
+#define DOOR_PIN 32
+#define PIN_MASK ((1ULL<<PIR_PIN)|(1ULL<<DOOR_PIN))
