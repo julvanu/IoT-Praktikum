@@ -32,7 +32,7 @@ static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
 
-#define MAX_PIR_EVENTS 20
+#define MAX_PIR_EVENTS 4
 time_t* pir_event_times[MAX_PIR_EVENTS] = { NULL };
 int8_t pir_event_idx = 0;
 
@@ -119,40 +119,50 @@ void sendToMQTT(char msg[], int size) {
   }
 }
 
-void sendPIREvents() {
-  char new_msg[1500];
-  snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
+// sends PIR events for all timestamps in pir_event_times to MQTT, then resets pir_event_idx to zero
+void sendPIREvents(char roomID[]) {
+  char msg[1500];
+  snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
+  for (int i = 0; i++; i < pir_event_idx)
+  {
+    size_t len = strlen(msg);
+    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"}", pir_event_times[i], roomID);
+  }
+  size_t len = strlen(msg);
+  snprintf(msg + len, sizeof(msg) - len, "]}]}"); 
 
+  sendToMQTT(msg, strlen(msg));
+  pir_event_idx = 0;
 }
 
-void addPIREvent() {
+// saves the timestamp of the current PIR event to pir_event_times
+// sends all current events if pir_event_times is full
+void addPIREvent(char roomID[]) {
   time_t now = 0;  
   time(&now);
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
 
-  // if pir_event_times array full, then send events to MQTT and reset array 
   if (pir_event_idx == MAX_PIR_EVENTS) {
-    sendPIREvents();
-    pir_event_idx = 0;
+    sendPIREvents(roomID);
   }
 }
 
-void addPIREventToMQTT(char msg[], char roomID[]) {
-  time_t now = 0;
-  time(&now);
+// void addPIREventToMQTT(char msg[], char roomID[]) {
+//   time_t now = 0;
+//   time(&now);
 
-  char new_msg[150];
-  snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
+//   char new_msg[150];
+//   snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
 
-  // ESP_LOGI("INFO", "msg: %s, strlen msg: %d, strlen new_msg: %d\n", msg, strlen(msg), strlen(new_msg));
-  if (strlen(msg) == 0) {
-    snprintf(msg, sizeof(new_msg),  new_msg);
-  } else {
-    snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
-  }
-  //TODO: check if (strlen(msg) > 1350) then send MQTT and clear msg
-}
+//   // ESP_LOGI("INFO", "msg: %s, strlen msg: %d, strlen new_msg: %d\n", msg, strlen(msg), strlen(new_msg));
+//   if (strlen(msg) == 0) {
+//     snprintf(msg, sizeof(new_msg),  new_msg);
+//   } else {
+//     snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
+//   }
+//   //TODO: check if (strlen(msg) > 1350) then send MQTT and clear msg
+// }
 
 void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
