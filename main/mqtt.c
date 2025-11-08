@@ -109,6 +109,18 @@ void start_mqtt(void) {
   }
 }
 
+void sendToMQTT(char msg[], int size) {
+  ESP_LOGI("mqtt", "Sent <%s> to topic %s", msg, DEVICE_TOPIC);
+  auto err = esp_mqtt_client_publish(mqtt_client, DEVICE_TOPIC, msg, size, 1, 0);
+  if (err == -1) {
+    printf("Error while publishing to mqtt\n");
+    ESP_LOGI("functions", "SendToMqttFunction terminated");
+    return ESP_FAIL;
+  }
+}
+
+void sendPIREvents() {}
+
 void addPIREvent() {
   time_t now = 0;  
   time(&now);
@@ -121,8 +133,6 @@ void addPIREvent() {
     pir_event_idx = 0;
   }
 }
-
-void sendPIREvents() {}
 
 void addPIREventToMQTT(char msg[], char roomID[]) {
   time_t now = 0;
@@ -159,6 +169,7 @@ void sendPIReventToMQTT(void) {
   time(&now);
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"corridor\"}]}]}", now * 1000);
+  
   sendToMQTT(msg, size);
 }
 
@@ -168,15 +179,6 @@ void sendBatteryStatusToMQTT(void) {
   time(&now);
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"battery\",\"values\":[{\"timestamp\":%llu, \"voltage\":%.1f, \"soc\":%.1f}]}]}", now * 1000, voltage, rsoc);
+  
   sendToMQTT(msg, size);
-}
-
-void sendToMQTT(char msg[], int size) {
-  ESP_LOGI("mqtt", "Sent <%s> to topic %s", msg, DEVICE_TOPIC);
-  auto err = esp_mqtt_client_publish(mqtt_client, DEVICE_TOPIC, msg, size, 1, 0);
-  if (err == -1) {
-    printf("Error while publishing to mqtt\n");
-    ESP_LOGI("functions", "SendToMqttFunction terminated");
-    return ESP_FAIL;
-  }
 }
