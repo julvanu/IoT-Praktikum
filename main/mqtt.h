@@ -8,6 +8,4 @@ void start_mqtt(void);
 void addPIREvent(char roomID[]);
 void sendPIReventToMQTT(char roomID[]);
 void sendBatteryStatusToMQTT(void);
-// void handleDoorEvent();
-// void sendDoorEventsToMQTT(time_t door_opened, time_t door_closed);
 void sendDoorEventToMQTT(char eventType[]);

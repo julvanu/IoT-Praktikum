@@ -185,30 +185,6 @@ void sendBatteryStatusToMQTT(void) {
   sendToMQTT(msg, size);
 }
 
-// void handleDoorEvent() {
-//   time_t door_opened = time(NULL);
-
-//   if (gpio_get_level(DOOR_PIN)==1) {
-//     ESP_LOGI("INFO", "Waiting on the door to close.");
-//     while (gpio_get_level(DOOR_PIN)==1){
-//       vTaskDelay(pdMS_TO_TICKS(1000));
-//     }
-//   }
-//   time_t door_closed = time(NULL);
-
-//   char msg[150];
-
-//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"open\"},{\"timestamp\":%llu, \"eventType\":\"closed\"}]}]}", door_opened, door_closed);
-//   sendToMQTT(msg, size);
-// }
-
-// void sendDoorEventsToMQTT(time_t door_opened, time_t door_closed) {
-//   char msg[150];
-
-//   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"open\"}, {\"timestamp\":%llu, \"eventType\":\"closed\"}]}]}", door_opened, door_closed);
-//   sendToMQTT(msg, size);
-// }
-
 void sendDoorEventToMQTT(char eventType[]) {
   time_t now = 0;
   time(&now);

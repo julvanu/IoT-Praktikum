@@ -84,22 +84,6 @@ void app_main() {
       // addPIREvent(roomID);
     } else {
       ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
-
-      // // handleDoorEvent();
-      // time_t door_opened = 0;
-      // time(&door_opened);
-
-      // if (gpio_get_level(DOOR_PIN)==1) {
-      //   ESP_LOGI("INFO", "Waiting on the door to close.");
-      //   while (gpio_get_level(DOOR_PIN)==1){
-      //     vTaskDelay(pdMS_TO_TICKS(1000));
-      //   }
-      // }
-      // time_t door_closed = 0;
-      // time(&door_closed);
-
-      // sendDoorEventsToMQTT(door_opened, door_closed);
-  
       sendDoorEventToMQTT("open");
 
       if (gpio_get_level(DOOR_PIN)==1) {
