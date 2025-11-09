@@ -15,6 +15,7 @@
 #include "wifi.h"
 #include "esp_sleep.h"
 #include "esp_mac.h"
+#include "identify_device.h"
 
 
 void app_main() {
@@ -55,19 +56,7 @@ void app_main() {
     ESP_LOGI("INFO", "External wakeup trigger");
   } else { //ESP_SLEEP_WAKEUP_UNDEFINED
     ESP_LOGI("INFO", "FLASH wakeup");
-
-    // MAC address retrieval
-    ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
-    unsigned char mac_base[6] = {0};
-    esp_read_mac(mac_base, ESP_MAC_WIFI_STA);
-    unsigned char mac_address[18];
-    snprintf(mac_address, 18, "%02x:%02x:%02x:%02x:%02x:%02x", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
-    ESP_LOGI("INFO", "MAC-address: %s", mac_address);
-    if (0 == memcmp ( mac_address, MAC_CORRIDOR, sizeof(mac_address) )) {
-      device_id = 1;
-    } else if (0 == memcmp ( mac_address, MAC_BATHROOM, sizeof(mac_address) )) {
-      device_id = 2;
-    }
+    device_id = identify_device();
   }
 
   // static RTC_DATA_ATTR char PIR_DATA_TABLE[150];
