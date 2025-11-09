@@ -50,7 +50,7 @@ void app_main() {
   } else { //ESP_SLEEP_WAKEUP_UNDEFINED
     ESP_LOGI("INFO", "FLASH wakeup");
     device_id = identify_device();
-    if(DEVICE_ID != device_id) {
+    if(atoi(DEVICE_ID) != device_id) {
       ESP_LOGE("ALARM", "Wrong configured DEVICE_ID in main.h!");
     }
   }
