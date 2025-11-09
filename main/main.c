@@ -18,6 +18,9 @@
 
 
 void app_main() {
+  // 1 == corridor | 2 == bathroom
+  static RTC_DATA_ATTR int device_id = 0; 
+  
   ESP_LOGI("progress", "[APP] Free memory: %d bytes", esp_get_free_heap_size());
   ESP_LOGI("progress", "[APP] IDF version: %s", esp_get_idf_version());
 
@@ -34,41 +37,43 @@ void app_main() {
   }
   ESP_ERROR_CHECK(ret);
 
+  ESP_LOGI("progress", "Starting Wifi");
+  start_wifi();
+
+  ESP_LOGI("progress", "Starting Clock");
+  start_clock();
+
+  ESP_LOGI("progress", "Starting MQTT");
+  start_mqtt();
+
+  // enable PIN for PIR sensor
+  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
+  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
+
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
   if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0 || wakeup_cause == ESP_SLEEP_WAKEUP_EXT1)  {
     ESP_LOGI("INFO", "External wakeup trigger");
   } else { //ESP_SLEEP_WAKEUP_UNDEFINED
     ESP_LOGI("INFO", "FLASH wakeup");
 
-    ESP_LOGI("progress", "Starting Wifi");
-    start_wifi();
-
-    ESP_LOGI("progress", "Starting Clock");
-    start_clock();
+    // MAC address retrieval
+    ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
+    unsigned char mac_base[6] = {0};
+    esp_read_mac(mac_base, ESP_MAC_WIFI_STA);
+    unsigned char mac_address[18];
+    snprintf(mac_address, 18, "%02x:%02x:%02x:%02x:%02x:%02x", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
+    ESP_LOGI("INFO", "MAC-address: %s", mac_address);
+    if (0 == memcmp ( mac_address, MAC_CORRIDOR, sizeof(mac_address) )) {
+      device_id = 1;
+    } else if (0 == memcmp ( mac_address, MAC_BATHROOM, sizeof(mac_address) )) {
+      device_id = 2;
+    }
   }
 
-  static RTC_DATA_ATTR char PIR_DATA_TABLE[150];
+  // static RTC_DATA_ATTR char PIR_DATA_TABLE[150];
+  // snprintf(PIR_DATA_TABLE, 20, "test");
 
-  snprintf(PIR_DATA_TABLE, 20, "test");
-  // MAC address retrieval
-  ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
-  unsigned char mac_base[6] = {0};
-  esp_read_mac(mac_base, ESP_MAC_WIFI_STA);
-  unsigned char mac_address[18];
-  snprintf(mac_address, 18, "%02x:%02x:%02x:%02x:%02x:%02x", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
-  ESP_LOGI("INFO", "MAC-address: %s", mac_address);
-
-  // Identity check
-  unsigned char mac_corridor[] = "64:b7:08:6e:ae:bc";
-  unsigned char mac_bathroom[] = "94:b9:7e:54:d3:00";
-
-  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
-  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
-
-  ESP_LOGI("progress", "Starting MQTT");
-  start_mqtt();
-
-  if (0 == memcmp ( mac_address, mac_corridor, sizeof(mac_address) )) {
+  if (device_id == 1) {
     // ---------------- DEVICE: corridor ------------------------------
     char roomID[] = "corridor";
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
@@ -106,7 +111,7 @@ void app_main() {
     }
     // ------------------------------ WAKE UP registration --------------------------------------------------
     ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
-  } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
+  } else if (device_id == 2) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
     ESP_LOGI("INFO", "DEVICE: %s", roomID);

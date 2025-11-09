@@ -25,3 +25,6 @@
 #define PIR_PIN 27 
 #define DOOR_PIN 32
 #define PIN_MASK ((1ULL<<PIR_PIN)|(1ULL<<DOOR_PIN))
+
+#define MAC_CORRIDOR "64:b7:08:6e:ae:bc"
+#define MAC_BATHROOM "94:b9:7e:54:d3:00"
