@@ -34,11 +34,6 @@ void app_main() {
   }
   ESP_ERROR_CHECK(ret);
 
-  // Enable PIN for door sensor
-  ESP_ERROR_CHECK(gpio_input_enable(DOOR_PIN));
-  ESP_ERROR_CHECK(gpio_set_direction(DOOR_PIN, GPIO_MODE_INPUT));
-  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(DOOR_PIN));
-
   // MAC address retrieval
   ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
   unsigned char mac_base[6] = {0};
@@ -56,17 +51,22 @@ void app_main() {
   ESP_LOGI("progress", "Starting MQTT");
   start_mqtt();
 
-  // Init MQTT message
-  char msg[1500] = "";
-
   // Identity check
   unsigned char mac_corridor[] = "64:b7:08:6e:ae:bc";
   unsigned char mac_bathroom[] = "94:b9:7e:54:d3:00";
+
+  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
+  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
 
   if (0 == memcmp ( mac_address, mac_corridor, sizeof(mac_address) )) {
     // ---------------- DEVICE: corridor ------------------------------
     char roomID[] = "corridor";
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
+
+    // Enable PIN for door sensor
+    ESP_ERROR_CHECK(gpio_input_enable(DOOR_PIN));
+    ESP_ERROR_CHECK(gpio_set_direction(DOOR_PIN, GPIO_MODE_INPUT));
+    ESP_ERROR_CHECK(rtc_gpio_pulldown_en(DOOR_PIN));
     
     // Battery status code
     getRSOC();
@@ -79,7 +79,6 @@ void app_main() {
     
       // PIR sensor code
       ESP_LOGI("progress", "Sending PIR event to MQTT");
-      ESP_LOGI("INFO", "Accumulated double MQTT msg: %s", msg);
       sendPIReventToMQTT(roomID);
       // addPIREvent(roomID);
     } else {
@@ -92,9 +91,11 @@ void app_main() {
           vTaskDelay(pdMS_TO_TICKS(1000));
         }
       }
-      
+
       sendDoorEventToMQTT("closed");
     }
+    // ------------------------------ WAKE UP registration --------------------------------------------------
+    ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
   } else if (0 == memcmp ( mac_address, mac_bathroom, sizeof(mac_address) )) {
     // ---------------- DEVICE: bathroom ------------------------------
     char roomID[] = "bathroom";
@@ -103,21 +104,17 @@ void app_main() {
     // PIR sensor code
     ESP_LOGI("progress", "Sending PIR event to MQTT");
     sendPIReventToMQTT(roomID);
+    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
   } else {
     // ---------------- Error handling: Unknown MAC address -----------
     ESP_LOGI("INFO", "DEVICE: UNKNOWN");
   }
-
-  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
-  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
 
   // sleep and wake up
   ESP_LOGI("progress", "Installing wakeup for PIR sensor");
   while (gpio_get_level(PIR_PIN)==1){
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
-  // ------------------------------ WAKE UP registration --------------------------------------------------
-  ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
 
   ESP_LOGI("progress", "Going to sleep");
   esp_deep_sleep_start();
