@@ -31,19 +31,6 @@ void app_main() {
   }
   ESP_ERROR_CHECK(ret);
 
-  ESP_LOGI("progress", "Starting Wifi");
-  start_wifi();
-
-  ESP_LOGI("progress", "Starting Clock");
-  start_clock();
-
-  ESP_LOGI("progress", "Starting MQTT");
-  start_mqtt();
-
-  // enable PIN for PIR sensor
-  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
-  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
-
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
   if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0 || wakeup_cause == ESP_SLEEP_WAKEUP_EXT1)  {
     ESP_LOGI("INFO", "External wakeup trigger");
@@ -54,6 +41,19 @@ void app_main() {
       ESP_LOGE("ALARM", "Wrong configured DEVICE_ID in main.h!");
     }
   }
+
+  // ESP_LOGI("progress", "Starting Wifi");
+  // start_wifi();
+
+  // ESP_LOGI("progress", "Starting Clock");
+  // start_clock();
+
+  // ESP_LOGI("progress", "Starting MQTT");
+  // start_mqtt();
+
+  // enable PIN for PIR sensor
+  ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
+  ESP_ERROR_CHECK(rtc_gpio_pulldown_en(PIR_PIN));
 
   if (device_id == 1) {
     // ---------------- DEVICE: corridor ------------------------------
@@ -75,8 +75,8 @@ void app_main() {
       ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
     
       // PIR sensor code
-      sendPIReventToMQTT(roomID);
-      // addPIREvent(roomID);
+      // sendPIReventToMQTT(roomID);
+      addPIREvent(roomID);
     } else {
       ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
       sendDoorEventToMQTT("open");
@@ -98,9 +98,8 @@ void app_main() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // PIR sensor code
-    sendPIReventToMQTT(roomID);
-    // ESP_LOGI("INFO", "roomID: %s", roomID);
-    // addPIREvent(roomID);
+    // sendPIReventToMQTT(roomID);
+    addPIREvent(roomID);
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
   } else {
     // ---------------- Error handling: Unknown MAC address -----------

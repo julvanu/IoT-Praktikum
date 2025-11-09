@@ -129,9 +129,11 @@ void sendPIREvents(char roomID[]) {
   {
     size_t len = strlen(msg);
     ESP_LOGI("INFO", "message_length: %d", len);
-    ESP_LOGI("INFO", "size that will be written: %d", sizeof(msg) - len);
+    // ESP_LOGI("INFO", "size that will be written: %d", sizeof(msg) - len);
     ESP_LOGI("INFO", "timestamp PIR event: %llu", pir_event_times[i]);
+    // ESP_LOGI("INFO", "roomID: %s", roomID);
     snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i], roomID);
+    ESP_LOGI("INFO", "intermediate message: %s", msg);
   }
   size_t len = strlen(msg);
   // NOTE: "len - 1" to remove the last comma in message
@@ -153,7 +155,6 @@ void addPIREvent(char roomID[]) {
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
     ESP_LOGI("INFO", "Max events reached: sending PIR events to MQTT\n");
-    ESP_LOGI("INFO", "roomID: %s", roomID);
     sendPIREvents(roomID);
   }
 }
