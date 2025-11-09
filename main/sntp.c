@@ -21,7 +21,7 @@ void time_sync_notification_cb(struct timeval *tv)
 
 void start_clock(void)
 {
-    	char strftime_buf[64];
+    char strftime_buf[64];
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     //sntp_setservername(0, "pool.ntp.org");
     sntp_setservername(0, SNTP_SERVER_NAME);
