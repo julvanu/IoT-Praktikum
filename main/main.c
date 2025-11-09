@@ -14,22 +14,15 @@
 #include "sntp.h"
 #include "wifi.h"
 #include "esp_sleep.h"
-#include "esp_mac.h"
 #include "identify_device.h"
+#include "init_logging.h"
 
 
 void app_main() {
   // 1 == corridor | 2 == bathroom
   static RTC_DATA_ATTR int device_id = 0; 
-  
-  ESP_LOGI("progress", "[APP] Free memory: %d bytes", esp_get_free_heap_size());
-  ESP_LOGI("progress", "[APP] IDF version: %s", esp_get_idf_version());
 
-  esp_log_level_set("*", ESP_LOG_ERROR);
-  esp_log_level_set("mqtt", ESP_LOG_INFO);
-  esp_log_level_set("progress", ESP_LOG_INFO);
-  esp_log_level_set("gauge", ESP_LOG_INFO);
-  esp_log_level_set("INFO", ESP_LOG_INFO);
+  init_logging();  
 
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
