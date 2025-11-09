@@ -33,8 +33,8 @@ static int qos_test = 1;
 const static int CONNECTED_BIT = BIT0;
 
 #define MAX_PIR_EVENTS 4
-time_t* pir_event_times[MAX_PIR_EVENTS] = { NULL };
-int8_t pir_event_idx = 0;
+static RTC_DATA_ATTR time_t* pir_event_times[MAX_PIR_EVENTS] = { NULL };
+static RTC_DATA_ATTR int8_t pir_event_idx = 0;
 
 void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
   esp_mqtt_event_t *data = (esp_mqtt_event_t *)event_data;
@@ -123,13 +123,19 @@ void sendToMQTT(char msg[], int size) {
 void sendPIREvents(char roomID[]) {
   char msg[1500];
   snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
-  for (int i = 0; i++; i < pir_event_idx)
+  ESP_LOGI("INFO", "roomID: %s", roomID);
+
+  for (int i = 0; i < pir_event_idx; i++)
   {
     size_t len = strlen(msg);
-    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"}", pir_event_times[i], roomID);
+    ESP_LOGI("INFO", "message_length: %d", len);
+    ESP_LOGI("INFO", "size that will be written: %d", sizeof(msg) - len);
+    ESP_LOGI("INFO", "timestamp PIR event: %llu", pir_event_times[i]);
+    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i], roomID);
   }
   size_t len = strlen(msg);
-  snprintf(msg + len, sizeof(msg) - len, "]}]}"); 
+  // NOTE: "len - 1" to remove the last comma in message
+  snprintf(msg + len - 1, sizeof(msg) - len, "]}]}"); 
 
   sendToMQTT(msg, strlen(msg));
   pir_event_idx = 0;
@@ -138,6 +144,7 @@ void sendPIREvents(char roomID[]) {
 // saves the timestamp of the current PIR event to pir_event_times
 // sends all current events if pir_event_times is full
 void addPIREvent(char roomID[]) {
+  ESP_LOGI("progress", "Logging PIR event...");
   time_t now = 0;  
   time(&now);
   pir_event_times[pir_event_idx] = now;
@@ -146,6 +153,7 @@ void addPIREvent(char roomID[]) {
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
     ESP_LOGI("INFO", "Max events reached: sending PIR events to MQTT\n");
+    ESP_LOGI("INFO", "roomID: %s", roomID);
     sendPIREvents(roomID);
   }
 }

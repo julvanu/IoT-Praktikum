@@ -50,10 +50,10 @@ void app_main() {
   } else { //ESP_SLEEP_WAKEUP_UNDEFINED
     ESP_LOGI("INFO", "FLASH wakeup");
     device_id = identify_device();
+    if(DEVICE_ID != device_id) {
+      ESP_LOGE("ALARM", "Wrong configured DEVICE_ID in main.h!");
+    }
   }
-
-  // static RTC_DATA_ATTR char PIR_DATA_TABLE[150];
-  // snprintf(PIR_DATA_TABLE, 20, "test");
 
   if (device_id == 1) {
     // ---------------- DEVICE: corridor ------------------------------
@@ -75,7 +75,6 @@ void app_main() {
       ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
     
       // PIR sensor code
-      ESP_LOGI("progress", "Sending PIR event to MQTT");
       sendPIReventToMQTT(roomID);
       // addPIREvent(roomID);
     } else {
@@ -99,8 +98,9 @@ void app_main() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // PIR sensor code
-    ESP_LOGI("progress", "Sending PIR event to MQTT");
     sendPIReventToMQTT(roomID);
+    // ESP_LOGI("INFO", "roomID: %s", roomID);
+    // addPIREvent(roomID);
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
   } else {
     // ---------------- Error handling: Unknown MAC address -----------
@@ -113,6 +113,6 @@ void app_main() {
     vTaskDelay(pdMS_TO_TICKS(1000));
   }
 
-  ESP_LOGI("progress", "Going to sleep");
+  ESP_LOGI("progress", "Going to sleep...");
   esp_deep_sleep_start();
 }
