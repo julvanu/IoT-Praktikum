@@ -30,9 +30,16 @@ void handle_corridor() {
         ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
         
         // MQTT: log/send PIR data
-        addPIREvent(roomID);
+        int reached_max_events = addPIREvent();
+        if(reached_max_events) {
+            initialize();
+            sendPIREvents(roomID);
+        }
+
     } else {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
+        
+        initialize();
         // MQTT: send door data
         sendDoorEventToMQTT("open");
 
@@ -53,6 +60,10 @@ void handle_bathroom() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // MQTT: log/send PIR data
-    addPIREvent(roomID);
+    int reached_max_events = addPIREvent();
+    if(reached_max_events) {
+        initialize();
+        sendPIREvents(roomID);
+    }
     // setup_ext0_PIR_wakeup(); DOES THIS WORK WITHOUT? => now in flash_init
 }

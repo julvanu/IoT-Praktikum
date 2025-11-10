@@ -17,6 +17,8 @@
 #include "init_logging.h"
 
 void initialize() {
+  ESP_LOGI("INFO", "Preparing to send data...");
+  
   ESP_LOGI("progress", "Starting Wifi");
   start_wifi();
 

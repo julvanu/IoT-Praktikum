@@ -139,8 +139,8 @@ void sendPIREvents(char roomID[]) {
 }
 
 // saves the timestamp of the current PIR event to pir_event_times
-// sends all current events if pir_event_times is full
-void addPIREvent(char roomID[]) {
+// returns 1 if MAX_PIR_EVENTS is reached, otherwise 0
+int addPIREvent(void) {
   ESP_LOGI("progress", "Logging PIR event...");
   time_t now = 0;  
   time(&now);
@@ -149,9 +149,10 @@ void addPIREvent(char roomID[]) {
   ESP_LOGI("INFO", "Loggend PIR event. PIR event index: %d\n", pir_event_idx);
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
-    ESP_LOGI("INFO", "Max events reached: sending PIR events to MQTT\n");
-    sendPIREvents(roomID);
+    ESP_LOGI("INFO", "Max PIR events reached\n");
+    return 1;
   }
+  return 0;
 }
 
 void sendPIReventToMQTT(char roomID[]) {
