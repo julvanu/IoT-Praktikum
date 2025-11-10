@@ -21,26 +21,26 @@ void handle_corridor() {
     char roomID[] = "corridor";
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
 
-    // MQTT: send battery data
-    ESP_LOGI("progress", "Sending battery status to MQTT");
-    sendBatteryStatusToMQTT();
-
     uint64_t wakeup_mask=esp_sleep_get_ext1_wakeup_status();
     if ((wakeup_mask & (1ULL<<PIR_PIN)) !=0) {
         ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
         
         // MQTT: log/send PIR data
-        initialize();
+        // initialize();
         int reached_max_events = addPIREvent();
         if(reached_max_events) {
             initialize_data_transfer();
             sendPIREvents(roomID);
+
+            // MQTT: send battery data
+            ESP_LOGI("progress", "Sending battery status to MQTT");
+            sendBatteryStatusToMQTT();
         }
 
     } else {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
         
-        initialize();
+        // initialize();
         initialize_data_transfer();
         // MQTT: send door data
         sendDoorEventToMQTT("open");
@@ -62,7 +62,7 @@ void handle_bathroom() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // MQTT: log/send PIR data
-    initialize();
+    // initialize();
     int reached_max_events = addPIREvent();
     if(reached_max_events) {
         initialize_data_transfer();

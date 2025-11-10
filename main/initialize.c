@@ -27,6 +27,9 @@ void initialize() {
 
 void initialize_data_transfer() {
   ESP_LOGI("INFO", "Preparing to send data...");
+  
+  ESP_LOGI("progress", "Starting Wifi");
+  start_wifi();
 
   ESP_LOGI("progress", "Starting MQTT");
   start_mqtt();
