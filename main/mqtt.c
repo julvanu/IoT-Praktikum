@@ -32,8 +32,8 @@ static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
 
-#define MAX_PIR_EVENTS 4
-static RTC_DATA_ATTR time_t* pir_event_times[MAX_PIR_EVENTS] = { NULL };
+#define MAX_PIR_EVENTS 10
+static RTC_DATA_ATTR time_t pir_event_times[MAX_PIR_EVENTS];
 static RTC_DATA_ATTR int8_t pir_event_idx = 0;
 
 void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
@@ -120,7 +120,7 @@ void sendToMQTT(char msg[], int size) {
 }
 
 // sends PIR events for all timestamps in pir_event_times to MQTT, then resets pir_event_idx to zero
-void sendPIREvents(char roomID[]) {
+void sendPIREvents(char roomID[]) {  
   char msg[1500];
   snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
   ESP_LOGI("INFO", "roomID: %s", roomID);
@@ -128,10 +128,7 @@ void sendPIREvents(char roomID[]) {
   for (int i = 0; i < pir_event_idx; i++)
   {
     size_t len = strlen(msg);
-    ESP_LOGI("INFO", "message_length: %d", len);
-    ESP_LOGI("INFO", "size that will be written: %d", sizeof(msg) - len);
-    ESP_LOGI("INFO", "timestamp PIR event: %llu", pir_event_times[i]);
-    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i], roomID);
+    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i] * 1000, roomID);
   }
   size_t len = strlen(msg);
   // NOTE: "len - 1" to remove the last comma in message
@@ -153,26 +150,9 @@ void addPIREvent(char roomID[]) {
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
     ESP_LOGI("INFO", "Max events reached: sending PIR events to MQTT\n");
-    ESP_LOGI("INFO", "roomID: %s", roomID);
     sendPIREvents(roomID);
   }
 }
-
-// void addPIREventToMQTT(char msg[], char roomID[]) {
-//   time_t now = 0;
-//   time(&now);
-
-//   char new_msg[150];
-//   snprintf(new_msg, sizeof(new_msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
-
-//   // ESP_LOGI("INFO", "msg: %s, strlen msg: %d, strlen new_msg: %d\n", msg, strlen(msg), strlen(new_msg));
-//   if (strlen(msg) == 0) {
-//     snprintf(msg, sizeof(new_msg),  new_msg);
-//   } else {
-//     snprintf(msg + strlen(msg)-2, sizeof(new_msg)-12, ", {\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
-//   }
-//   //TODO: check if (strlen(msg) > 1350) then send MQTT and clear msg
-// }
 
 void sendPIReventToMQTT(char roomID[]) {
   time_t now = 0;
