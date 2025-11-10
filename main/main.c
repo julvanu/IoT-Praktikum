@@ -42,14 +42,14 @@ void app_main() {
     }
   }
 
-  // ESP_LOGI("progress", "Starting Wifi");
-  // start_wifi();
+  ESP_LOGI("progress", "Starting Wifi");
+  start_wifi();
 
-  // ESP_LOGI("progress", "Starting Clock");
-  // start_clock();
+  ESP_LOGI("progress", "Starting Clock");
+  start_clock();
 
-  // ESP_LOGI("progress", "Starting MQTT");
-  // start_mqtt();
+  ESP_LOGI("progress", "Starting MQTT");
+  start_mqtt();
 
   // enable PIN for PIR sensor
   ESP_ERROR_CHECK(gpio_set_direction(PIR_PIN, GPIO_MODE_INPUT));
