@@ -52,7 +52,7 @@ void handle_corridor() {
         // MQTT: send door data
         sendDoorEventToMQTT("closed");
     }
-    // setup_ext1_any_wakeup(); DOES THIS WORK WITHOUT? => now in flash_init
+    setup_ext1_any_wakeup();
 }
 
 void handle_bathroom() {
@@ -65,5 +65,5 @@ void handle_bathroom() {
         initialize();
         sendPIREvents(roomID);
     }
-    // setup_ext0_PIR_wakeup(); DOES THIS WORK WITHOUT? => now in flash_init
+    setup_ext0_PIR_wakeup();
 }
