@@ -19,6 +19,8 @@ int flash_init() {
         abort();
     }
 
+    initialize();
+
     // device specific setup
     if (device_id == 1) {
         // DEVICE: corridor

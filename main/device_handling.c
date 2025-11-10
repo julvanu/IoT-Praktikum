@@ -30,6 +30,7 @@ void handle_corridor() {
         ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
         
         // MQTT: log/send PIR data
+        initialize();
         int reached_max_events = addPIREvent();
         if(reached_max_events) {
             initialize_data_transfer();
@@ -39,6 +40,7 @@ void handle_corridor() {
     } else {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
         
+        initialize();
         initialize_data_transfer();
         // MQTT: send door data
         sendDoorEventToMQTT("open");
@@ -60,6 +62,7 @@ void handle_bathroom() {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     
     // MQTT: log/send PIR data
+    initialize();
     int reached_max_events = addPIREvent();
     if(reached_max_events) {
         initialize_data_transfer();

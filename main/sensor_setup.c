@@ -30,10 +30,10 @@ void setup_door() {
 void setup_ext0_PIR_wakeup() {
     ESP_LOGI("progress", "Installing wakeup for PIR sensor");
 
-    // Do we really need this? For what?
-    while (gpio_get_level(PIR_PIN)==1){
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    // So that PIR events are not spammed
+    // while (gpio_get_level(PIR_PIN)==1){
+    //     vTaskDelay(pdMS_TO_TICKS(1000));
+    // }
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
 }
 
