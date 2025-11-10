@@ -1,4 +1,4 @@
-idf_component_register(SRCS main.c wifi.c sntp.c mqtt.c gauge.c controlflow.c identify_device.c init_logging.c flash_init.c 
+idf_component_register(SRCS main.c wifi.c sntp.c mqtt.c gauge.c controlflow.c identify_device.c flash_init.c 
                     initialize.c sensor_setup.c device_handling.c
 					EMBED_TXTFILES 
                     INCLUDE_DIRS "."

@@ -32,7 +32,7 @@ void setup_ext0_PIR_wakeup() {
 
     // Do we really need this? For what?
     while (gpio_get_level(PIR_PIN)==1){
-    vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
 }

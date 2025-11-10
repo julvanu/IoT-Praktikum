@@ -25,7 +25,9 @@ void app_main() {
   // 1 == corridor | 2 == bathroom
   static RTC_DATA_ATTR int device_id = 0;
 
-  init_logging();  
+  init_logging();
+
+  initialize_nvs();
 
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
