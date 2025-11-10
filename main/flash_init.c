@@ -29,15 +29,15 @@ int flash_init() {
     if (device_id == 1) {
         // DEVICE: corridor
         ESP_LOGI("INFO", "Sensor setup for DEVICE corridor...");
-
         setup_PIR();
         setup_door();
         setup_battery();
+        setup_ext1_any_wakeup();
     } else if (device_id == 2) {
         // DEVICE: bathroom
         ESP_LOGI("INFO", "Sensor setup for DEVICE bathroom...");
-
         setup_PIR();
+        setup_ext0_PIR_wakeup();
     } else {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", device_id);
         abort();
