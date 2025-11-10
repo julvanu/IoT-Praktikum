@@ -31,12 +31,16 @@ void setup_ext0_PIR_wakeup() {
     ESP_LOGI("progress", "Installing wakeup for PIR sensor");
 
     // So that PIR events are not spammed
-    // while (gpio_get_level(PIR_PIN)==1){
-    //     vTaskDelay(pdMS_TO_TICKS(1000));
-    // }
+    while (gpio_get_level(PIR_PIN)==1){
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
 }
 
 void setup_ext1_any_wakeup() {
+    ESP_LOGI("progress", "Installing EXT1 wakeup");
+    while (gpio_get_level(PIR_PIN)==1){
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
     ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
 }
