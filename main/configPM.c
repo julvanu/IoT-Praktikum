@@ -11,5 +11,5 @@ void configPM() {
     };
     ESP_ERROR_CHECK(esp_pm_configure(&pm_config));
     ESP_LOGI("INFO", "Frequency config successful.");
-    esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
+    // esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER); // Prof. Gerndt said this would help but it did not seem like it does
 } 
