@@ -20,18 +20,6 @@
 #include "flash_init.h"
 #include "device_handling.h"
 
-// #include "esp_pm.h"
-
-// void configPM(){
-//  esp_pm_config_esp32_t pm_config = {
-//   .max_freq_mhz = 160,
-//   .min_freq_mhz = 160, //DFS, enable in menucofig in Power Management
-//   .light_sleep_enable = true //automatic light sleep, enable via menuconfig in FreeRTOS
-//  };
-//  ESP_ERROR_CHECK(esp_pm_configure(&pm_config));
-//  ESP_LOGI("INFO", "Frequency config successful.");
-// } 
-
 
 void app_main() {
   // 1 == corridor | 2 == bathroom
@@ -49,12 +37,11 @@ void app_main() {
     if (device_id == 1) {
       // ---------------- DEVICE: corridor ------------------------------
       handle_corridor();
-    } else if (device_id == 2) {
+    } else if (device_id == 2 || device_id == 4) {
       // ---------------- DEVICE: bathroom ------------------------------
       handle_bathroom();
     }
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
-    // configPM();
     device_id = flash_init();
   }
 

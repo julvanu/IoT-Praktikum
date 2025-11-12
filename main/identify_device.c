@@ -21,6 +21,8 @@ int identify_device() {
       device_id = 1;
     } else if (0 == memcmp ( mac_address, MAC_BATHROOM, sizeof(mac_address) )) {
       device_id = 2;
+    } else if (0 == memcmp ( mac_address, MAC_KITCHEN, sizeof(mac_address) )) {
+      device_id = 4;
     }
     return device_id;
 }

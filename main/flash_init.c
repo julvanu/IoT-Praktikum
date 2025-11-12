@@ -16,7 +16,7 @@ int flash_init() {
     int device_id = identify_device();
     if(atoi(DEVICE_ID) != device_id) {
         ESP_LOGE("ERROR", "Wrong DEVICE_ID in main.h! DEVICE_ID is defined as %d, but the actual detected device_id is %d.", atoi(DEVICE_ID), device_id);
-        abort();
+        esp_system_abort("System abort due to wrong DEVICE_ID in main.h!");
     }
 
     initialize();
@@ -34,6 +34,11 @@ int flash_init() {
         ESP_LOGI("INFO", "Sensor setup for DEVICE bathroom...");
         setup_PIR();
         setup_ext0_PIR_wakeup();
+    } else if (device_id == 4){
+        // DEVICE: kitchen
+        ESP_LOGI("INFO", "Sensor setup for DEVICE kitchen...");
+        setup_PIR();
+        setup_ext0_PIR_wakeup();        
     } else {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", device_id);
         abort();
