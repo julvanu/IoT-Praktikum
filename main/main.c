@@ -37,9 +37,12 @@ void app_main() {
     if (device_id == 1) {
       // ---------------- DEVICE: corridor ------------------------------
       handle_corridor();
-    } else if (device_id == 2 || device_id == 4) {
+    } else if (device_id == 2) {
       // ---------------- DEVICE: bathroom ------------------------------
       handle_bathroom();
+    } else if (device_id == 4) {
+      // ---------------- DEVICE: kitchen ------------------------------
+      handle_kitchen();
     }
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
     device_id = flash_init();

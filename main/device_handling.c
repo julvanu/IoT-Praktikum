@@ -57,10 +57,8 @@ void handle_corridor() {
     setup_ext1_any_wakeup();
 }
 
-void handle_bathroom() {
-    char roomID[] = "bathroom";
+void handle_one_PIR(char roomID[]) {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
-    
     // MQTT: log/send PIR data
     // initialize();
     int reached_max_events = addPIREvent();
@@ -69,4 +67,14 @@ void handle_bathroom() {
         sendPIREvents(roomID);
     }
     setup_ext0_PIR_wakeup();
+}
+
+void handle_bathroom() {
+    char roomID[] = "bathroom";
+    handle_one_PIR(roomID);
+}
+
+void handle_kitchen() {
+    char roomID[] = "kitchen";
+    handle_one_PIR(roomID);
 }
