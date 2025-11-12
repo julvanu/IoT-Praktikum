@@ -27,7 +27,6 @@ int flash_init() {
         ESP_LOGI("INFO", "Sensor setup for DEVICE corridor...");
         setup_PIR();
         setup_door();
-        setup_battery();
         setup_ext1_any_wakeup();
     } else if (device_id == 2) {
         // DEVICE: bathroom

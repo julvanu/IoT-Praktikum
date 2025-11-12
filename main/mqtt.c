@@ -165,6 +165,7 @@ void sendPIReventToMQTT(char roomID[]) {
 }
 
 void sendBatteryStatusToMQTT(void) {
+  getRSOC();
   time_t now = 0;
   time(&now);
   char msg[150];
