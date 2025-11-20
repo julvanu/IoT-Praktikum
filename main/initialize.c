@@ -53,5 +53,7 @@ void init_logging() {
   esp_log_level_set("mqtt", ESP_LOG_INFO);
   esp_log_level_set("progress", ESP_LOG_INFO);
   esp_log_level_set("gauge", ESP_LOG_INFO);
+  esp_log_level_set("sntp", ESP_LOG_INFO);
+  esp_log_level_set("RTC", ESP_LOG_INFO);
   esp_log_level_set("INFO", ESP_LOG_INFO);
 }

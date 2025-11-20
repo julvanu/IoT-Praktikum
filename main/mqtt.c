@@ -18,11 +18,13 @@
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
 
+#include "time.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
 #include "main.h"
 #include "gauge.h"
 #include "controlflow.h"
+#include "ext_clock.h"
 
 
 
@@ -142,8 +144,9 @@ void sendPIREvents(char roomID[]) {
 // returns 1 if MAX_PIR_EVENTS is reached, otherwise 0
 int addPIREvent(void) {
   ESP_LOGI("progress", "Logging PIR event...");
-  time_t now = 0;  
-  time(&now);
+
+  time_t now = get_time_ext_clock();
+
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
   ESP_LOGI("INFO", "Loggend PIR event. PIR event index: %d\n", pir_event_idx);
@@ -153,15 +156,6 @@ int addPIREvent(void) {
     return 1;
   }
   return 0;
-}
-
-void sendPIReventToMQTT(char roomID[]) {
-  time_t now = 0;
-  time(&now);
-  char msg[150];
-
-  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[{\"timestamp\":%llu, \"roomID\":\"%s\"}]}]}", now * 1000, roomID);
-  sendToMQTT(msg, size);
 }
 
 void sendBatteryStatusToMQTT(void) {
