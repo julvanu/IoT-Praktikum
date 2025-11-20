@@ -32,7 +32,7 @@ static int qos_test = 1;
 
 const static int CONNECTED_BIT = BIT0;
 
-#define MAX_PIR_EVENTS 6
+#define MAX_PIR_EVENTS 10
 static RTC_DATA_ATTR time_t pir_event_times[MAX_PIR_EVENTS];
 static RTC_DATA_ATTR int8_t pir_event_idx = 0;
 
