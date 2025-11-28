@@ -112,7 +112,7 @@ void start_mqtt(void) {
 }
 
 void sendToMQTT(char msg[], int size) {
-  ESP_LOGI("mqtt", "Sent <%s> to topic %s", msg, DEVICE_TOPIC);
+  ESP_LOGI("mqtt", "Sending <%s> to topic %s", msg, DEVICE_TOPIC);
   auto err = esp_mqtt_client_publish(mqtt_client, DEVICE_TOPIC, msg, size, 1, 0);
   if (err == -1) {
     printf("Error while publishing to mqtt\n");

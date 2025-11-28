@@ -19,6 +19,7 @@
 #include "sensor_setup.h"
 #include "flash_init.h"
 #include "device_handling.h"
+#include "ext_clock.h"
 
 
 void app_main() {
@@ -28,6 +29,8 @@ void app_main() {
   init_logging();
 
   initialize_nvs();
+  
+  init_ext_clock();
 
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 

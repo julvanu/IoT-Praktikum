@@ -51,21 +51,13 @@ void start_clock(void)
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
     ESP_LOGI("progress", "The current date/time in Germany is: %s", strftime_buf);
 
-    // ========= Initialize ds3231 RTC =========
-    i2c_dev_t dev = init_ext_clock();
-
-    // Sync ext RTC with SNTP time
+    // Sync ext clock with SNTP time
     ESP_LOGI("progress", "Syncing external clock with sntp time...");
-    if (ds3231_set_time(&dev, &timeinfo) != ESP_OK) {
-        ESP_LOGE("RTC", "Failed to write sntp time to rtc\n");
-    }
+    set_time_ext_clock(&timeinfo);
 
-    float temp = 0.0;
-    if (ds3231_get_temp_float(&dev, &temp) != ESP_OK) {
-        ESP_LOGE("RTC", "Could not get temperature\n");
-    }
+    float temp = get_temp_ext_clock();
 
-    now = get_time_ext_clock_no_init(dev);
+    now = get_time_ext_clock();
     
     localtime_r(&now, &timeinfo);
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
