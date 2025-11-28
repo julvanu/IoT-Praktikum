@@ -160,8 +160,7 @@ int addPIREvent(void) {
 
 void sendBatteryStatusToMQTT(void) {
   getRSOC();
-  time_t now = 0;
-  time(&now);
+  time_t now = get_time_ext_clock();
   char msg[150];
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"battery\",\"values\":[{\"timestamp\":%llu, \"voltage\":%.1f, \"soc\":%.1f}]}]}", now * 1000, voltage, rsoc);
@@ -170,8 +169,7 @@ void sendBatteryStatusToMQTT(void) {
 }
 
 void sendDoorEventToMQTT(char eventType[]) {
-  time_t now = 0;
-  time(&now);
+  time_t now = get_time_ext_clock();
   char msg[150];
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", now * 1000, eventType);
