@@ -168,10 +168,9 @@ void sendBatteryStatusToMQTT(void) {
   sendToMQTT(msg, size);
 }
 
-void sendDoorEventToMQTT(char eventType[]) {
-  time_t now = get_time_ext_clock();
+void sendDoorEventToMQTT(time_t time, char eventType[]) {
   char msg[150];
 
-  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", now * 1000, eventType);
+  int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", time * 1000, eventType);
   sendToMQTT(msg, size);
 }

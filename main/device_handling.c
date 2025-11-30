@@ -16,6 +16,7 @@
 #include "esp_sleep.h"
 #include "initialize.h"
 #include "sensor_setup.h"
+#include "time.h"
 
 void handle_corridor() {
     char roomID[] = "corridor";
@@ -39,11 +40,12 @@ void handle_corridor() {
 
     } else {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
-        
-        // initialize();
+        time_t time_opened = get_time_ext_clock();
+        setup_door();
+
         initialize_data_transfer();
         // MQTT: send door data
-        sendDoorEventToMQTT("open");
+        sendDoorEventToMQTT(time_opened, "open");
 
         if (gpio_get_level(DOOR_PIN)==1) {
             ESP_LOGI("INFO", "Waiting on the door to close.");
@@ -52,7 +54,8 @@ void handle_corridor() {
             }
         }
         // MQTT: send door data
-        sendDoorEventToMQTT("closed");
+        time_t time_closed = get_time_ext_clock();
+        sendDoorEventToMQTT(time_closed, "closed");
     }
     setup_ext1_any_wakeup();
 }
