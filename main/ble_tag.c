@@ -10,7 +10,6 @@
 #include "esp_gatt_defs.h"
 #include "esp_bt_main.h"
 #include "esp_bt_defs.h"
-// #include "esp_ibeacon_api.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 
@@ -18,8 +17,7 @@ static SemaphoreHandle_t scan_done_sem;
 bool found_device = false;
 int8_t found_rssi = 127;
 
-static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param)
-{
+static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
     esp_err_t err;
     switch (event) {
         case ESP_GAP_BLE_SCAN_START_COMPLETE_EVT:
@@ -54,21 +52,6 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                     } else {
                         ESP_LOGE(BLE_LOGGING_TAG, "Unknown BLE tag found with address: %s", mac_address);
                     }
-                    /* Search for BLE iBeacon Packet */
-                    // if (esp_ble_is_ibeacon_packet(scan_result->scan_rst.ble_adv, scan_result->scan_rst.adv_data_len)) {
-                    //     esp_ble_ibeacon_t *ibeacon_data = (esp_ble_ibeacon_t *)(scan_result->scan_rst.ble_adv);
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "----------iBeacon Found----------");
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "Device address: " ESP_BD_ADDR_STR "", ESP_BD_ADDR_HEX(scan_result->scan_rst.bda));
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "For manual check, the predefined address is: %s", MAC_BLE_TAG);
-                    //     ESP_LOG_BUFFER_HEX("BLE_TAG: Proximity UUID", ibeacon_data->ibeacon_vendor.proximity_uuid, ESP_UUID_LEN_128);
-
-                    //     uint16_t major = ENDIAN_CHANGE_U16(ibeacon_data->ibeacon_vendor.major);
-                    //     uint16_t minor = ENDIAN_CHANGE_U16(ibeacon_data->ibeacon_vendor.minor);
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "Major: 0x%04x (%d)", major, major);
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "Minor: 0x%04x (%d)", minor, minor);
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "Measured power (RSSI at a 1m distance): %d dBm", ibeacon_data->ibeacon_vendor.measured_power);
-                    //     ESP_LOGI(BLE_LOGGING_TAG, "RSSI of packet: %d dbm", scan_result->scan_rst.rssi);
-                    // }
                     break;
                 case ESP_GAP_SEARCH_INQ_CMPL_EVT:
                     // scan completed
@@ -85,7 +68,7 @@ bool check_ble_near() {
     ESP_LOGI(BLE_LOGGING_TAG, "Starting BLE scan for %d seconds...", SCAN_DURATION_SECONDS);
     esp_ble_gap_start_scanning(SCAN_DURATION_SECONDS);
 
-    // wait for scan to finish (scan_done_sem signaled in GAP callback)
+    // Wait for scan to finish (scan_done_sem signaled in callback)
     if (xSemaphoreTake(scan_done_sem, (SCAN_DURATION_SECONDS + 2) * 1000 / portTICK_PERIOD_MS) == pdTRUE) {
         if (found_device) {
             if (found_rssi >= RSSI_NEAR_THRESHOLD) {
@@ -123,7 +106,7 @@ void ble_init() {
     esp_bluedroid_init();
     esp_bluedroid_enable();
 
-    // Register GAP callback
+    // Register BLE callback
     register_ble_callback();
     
     scan_done_sem = xSemaphoreCreateBinary();
