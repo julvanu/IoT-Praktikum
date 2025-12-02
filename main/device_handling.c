@@ -26,11 +26,10 @@ void handle_corridor() {
     if ((wakeup_mask & (1ULL<<PIR_PIN)) !=0) {
         ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
         
-        // MQTT: log/send PIR data
-        // initialize();
         int reached_max_events = addPIREvent();
         if(reached_max_events) {
             initialize_data_transfer();
+            // MQTT: send all logged PIR data
             sendPIREvents(roomID);
 
             // MQTT: send battery data
@@ -42,11 +41,10 @@ void handle_corridor() {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
         time_t time_opened = get_time_ext_clock();
         setup_door();
-
         initialize_data_transfer();
         // MQTT: send door data
         sendDoorEventToMQTT(time_opened, "open");
-
+        
         if (gpio_get_level(DOOR_PIN)==1) {
             ESP_LOGI("INFO", "Waiting on the door to close.");
             while (gpio_get_level(DOOR_PIN)==1){
@@ -62,11 +60,10 @@ void handle_corridor() {
 
 void handle_one_PIR(char roomID[]) {
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
-    // MQTT: log/send PIR data
-    // initialize();
     int reached_max_events = addPIREvent();
     if(reached_max_events) {
         initialize_data_transfer();
+        // MQTT: send all logged PIR data
         sendPIREvents(roomID);
     }
     setup_ext0_PIR_wakeup();
