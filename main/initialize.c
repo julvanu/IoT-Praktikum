@@ -14,6 +14,7 @@
 #include "sntp.h"
 #include "wifi.h"
 #include "esp_sleep.h"
+#include "ble_tag.h"
 
 void initialize() { 
   ESP_LOGI("progress", "Starting Wifi");
@@ -56,4 +57,5 @@ void init_logging() {
   esp_log_level_set("sntp", ESP_LOG_INFO);
   esp_log_level_set("RTC", ESP_LOG_INFO);
   esp_log_level_set("INFO", ESP_LOG_INFO);
+  esp_log_level_set(BLE_LOGGING_TAG, ESP_LOG_INFO);
 }
