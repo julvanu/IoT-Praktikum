@@ -161,7 +161,7 @@ int addPIREvent(void) {
 
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
-  ESP_LOGI("INFO", "Loggend PIR event. PIR event index: %d\n", pir_event_idx);
+  ESP_LOGI("INFO", "Logged PIR event. PIR event index: %d\n", pir_event_idx);
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
     ESP_LOGI("INFO", "Max PIR events reached\n");
