@@ -20,6 +20,7 @@
 #include "flash_init.h"
 #include "device_handling.h"
 #include "ext_clock.h"
+#include "ble_tag.h"
 
 
 void app_main() {
@@ -36,6 +37,7 @@ void app_main() {
 
   if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0 || wakeup_cause == ESP_SLEEP_WAKEUP_EXT1)  {
     ESP_LOGI("INFO", "External wakeup trigger");
+    ble_init();
 
     if (device_id == 1) {
       // ---------------- DEVICE: corridor ------------------------------
