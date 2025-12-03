@@ -8,8 +8,7 @@
 #include "ext_clock.h"
 #include "mqtt.h"
 
-// #define SLEEP_SEC 86400 // 24 hours
-#define SLEEP_SEC 120
+#define SLEEP_SEC 86400 // 24 hours
 static RTC_DATA_ATTR time_t last_data_submission;
 
 int get_seconds_since_last_submission() {
@@ -29,8 +28,7 @@ void reset_periodic_wakeup_timer() {
 void continue_periodic_wakeup_timer(int device_id) {
     int seconds_since_last = get_seconds_since_last_submission();
     int sleep_time = SLEEP_SEC - seconds_since_last;
-    // if (sleep_time < 30) {
-    if (sleep_time < 15) {
+    if (sleep_time < 30) {
         ESP_LOGI("periodic_wakeup", "Almost 24 hours since last data submission, sending data now.");
         send_periodic_data(device_id);
         sleep_time = SLEEP_SEC;
