@@ -124,22 +124,24 @@ void sendToMQTT(char msg[], int size) {
 }
 
 // sends PIR events for all timestamps in pir_event_times to MQTT, then resets pir_event_idx to zero
-void sendPIREvents(char roomID[]) {  
-  char msg[1500];
-  snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
-  ESP_LOGI("INFO", "roomID: %s", roomID);
+void sendPIREvents(char roomID[]) {
+  if(pir_event_idx > 0) {
+    char msg[1500];
+    snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
+    ESP_LOGI("INFO", "roomID: %s", roomID);
 
-  for (int i = 0; i < pir_event_idx; i++)
-  {
+    for (int i = 0; i < pir_event_idx; i++)
+    {
+      size_t len = strlen(msg);
+      snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i] * 1000, roomID);
+    }
     size_t len = strlen(msg);
-    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i] * 1000, roomID);
-  }
-  size_t len = strlen(msg);
-  // NOTE: "len - 1" to remove the last comma in message
-  snprintf(msg + len - 1, sizeof(msg) - len, "]}]}"); 
+    // NOTE: "len - 1" to remove the last comma in message
+    snprintf(msg + len - 1, sizeof(msg) - len, "]}]}"); 
 
-  sendToMQTT(msg, strlen(msg));
-  pir_event_idx = 0;
+    sendToMQTT(msg, strlen(msg));
+    pir_event_idx = 0;
+  }
   // Reset periodic wakeup timer
   reset_periodic_wakeup_timer();
 }
