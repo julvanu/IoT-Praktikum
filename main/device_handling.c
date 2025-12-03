@@ -24,7 +24,7 @@ void handle_corridor() {
 
     uint64_t wakeup_mask=esp_sleep_get_ext1_wakeup_status();
     if ((wakeup_mask & (1ULL<<PIR_PIN)) !=0) {
-        ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
+        ESP_LOGI("INFO", "WAKE UP: Due to PIR event.\n");
         
         int reached_max_events = addPIREvent();
         if(reached_max_events) {
@@ -38,22 +38,29 @@ void handle_corridor() {
         }
 
     } else {
-        ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
+        ESP_LOGI("INFO", "WAKE UP: Due to opened door.\n");
         time_t time_opened = get_time_ext_clock();
-        setup_door();
-        initialize_data_transfer();
-        // MQTT: send door data
-        sendDoorEventToMQTT(time_opened, "open");
         
-        if (gpio_get_level(DOOR_PIN)==1) {
-            ESP_LOGI("INFO", "Waiting on the door to close.");
-            while (gpio_get_level(DOOR_PIN)==1){
-                vTaskDelay(pdMS_TO_TICKS(1000));
+        // Check if BLE tag is near
+        if(check_ble_near()) {
+            setup_door();
+            initialize_data_transfer();
+            // MQTT: send door data
+            sendDoorEventToMQTT(time_opened, "open");
+            
+            if (gpio_get_level(DOOR_PIN)==1) {
+                ESP_LOGI("INFO", "Waiting on the door to close.");
+                while (gpio_get_level(DOOR_PIN)==1){
+                    vTaskDelay(pdMS_TO_TICKS(1000));
+                }
             }
+            // MQTT: send door data
+            time_t time_closed = get_time_ext_clock();
+            sendDoorEventToMQTT(time_closed, "closed");
+        } else {
+            ESP_LOGI("INFO", "BLE tag not near, ignoring door event.\n");
+            return 0;
         }
-        // MQTT: send door data
-        time_t time_closed = get_time_ext_clock();
-        sendDoorEventToMQTT(time_closed, "closed");
     }
     setup_ext1_any_wakeup();
 }

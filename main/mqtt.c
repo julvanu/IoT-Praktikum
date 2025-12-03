@@ -155,7 +155,7 @@ int addPIREvent(void) {
 
   // Check if BLE tag is near
   if(!check_ble_near()) {
-    ESP_LOGI("INFO", "BLE tag not near, ignoring PIR event.");
+    ESP_LOGI("INFO", "BLE tag not near, ignoring PIR event.\n");
     return 0;
   }
 
@@ -164,7 +164,7 @@ int addPIREvent(void) {
   ESP_LOGI("INFO", "Logged PIR event. PIR event index: %d\n", pir_event_idx);
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
-    ESP_LOGI("INFO", "Max PIR events reached\n");
+    ESP_LOGI("INFO", "Max PIR events reached");
     return 1;
   }
   return 0;
