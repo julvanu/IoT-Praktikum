@@ -20,6 +20,7 @@
 #include "flash_init.h"
 #include "device_handling.h"
 #include "ext_clock.h"
+#include "periodic_wakeup_timer.h"
 
 
 void app_main() {
@@ -49,13 +50,12 @@ void app_main() {
     }
   } else if (wakeup_cause == ESP_SLEEP_WAKEUP_TIMER) {
     ESP_LOGI("INFO", "Timer wakeup trigger");
+    // send_periodic_data(device_id); Brauchts wsl gar nicht wegen continue_periodic_wakeup_timer
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
     device_id = flash_init();
   }
 
-  // TODO: Where to reset the time?
-  // int sleep_sec = 86400; // 24 hours
-  // ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(1000000LL * sleep_sec));
+  continue_periodic_wakeup_timer(device_id);
   ESP_LOGI("progress", "Going to sleep...");
   esp_deep_sleep_start();
 }

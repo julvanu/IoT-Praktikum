@@ -26,3 +26,16 @@ int identify_device() {
     }
     return device_id;
 }
+
+char* get_device_name_by_id(int device_id) {
+    switch (device_id) {
+        case 1:
+            return "corridor";
+        case 2:
+            return "bathroom";
+        case 4:
+            return "kitchen";
+        default:
+            return NULL;
+    }
+}

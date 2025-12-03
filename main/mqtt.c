@@ -25,6 +25,7 @@
 #include "gauge.h"
 #include "controlflow.h"
 #include "ext_clock.h"
+#include "periodic_wakeup_timer.h"
 
 
 
@@ -138,6 +139,8 @@ void sendPIREvents(char roomID[]) {
 
   sendToMQTT(msg, strlen(msg));
   pir_event_idx = 0;
+  // Reset periodic wakeup timer
+  reset_periodic_wakeup_timer();
 }
 
 // saves the timestamp of the current PIR event to pir_event_times
@@ -173,4 +176,13 @@ void sendDoorEventToMQTT(time_t time, char eventType[]) {
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", time * 1000, eventType);
   sendToMQTT(msg, size);
+}
+
+void send_periodic_data(int device_id) {
+    initialize_data_transfer();
+    sendPIREvents(get_device_name_by_id(device_id));
+    if (device_id == 1) {
+      sendBatteryStatusToMQTT();
+    }
+    reset_periodic_wakeup_timer();
 }
