@@ -12,10 +12,18 @@
 #include "esp_bt_defs.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
+#include "identify_device.h"
 
 static SemaphoreHandle_t scan_done_sem;
 bool found_device = false;
 int8_t found_rssi = 127;
+
+void handle_scan_complete() {
+    if (found_device) {
+        ESP_LOGI(BLE_LOGGING_TAG, "Scan complete. Found target with rssi=%d", found_rssi);
+        xSemaphoreGive(scan_done_sem);
+    }
+}
 
 static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
     esp_err_t err;
@@ -30,12 +38,7 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
             }
             break;
         case ESP_GAP_BLE_SCAN_STOP_COMPLETE_EVT:
-            if ((err = param->scan_stop_cmpl.status) != ESP_BT_STATUS_SUCCESS) {
-                ESP_LOGE(BLE_LOGGING_TAG, "Scanning stop failed, error %s", esp_err_to_name(err));
-            }
-            else {
-                ESP_LOGI(BLE_LOGGING_TAG, "Scanning stop successfully");
-            }
+            handle_scan_complete();
             break;
         case ESP_GAP_BLE_SCAN_RESULT_EVT:
             esp_ble_gap_cb_param_t *scan_result = (esp_ble_gap_cb_param_t *)param;
@@ -46,17 +49,14 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                     char mac_address[18];
                     addr_to_str(bda, mac_address, sizeof(mac_address));
                     if (memcmp(mac_address, MAC_BLE_TAG, sizeof(mac_address)) == 0) {
+                        esp_ble_gap_stop_scanning();
                         found_device = true;
                         found_rssi = rssi;
                         ESP_LOGI(BLE_LOGGING_TAG, "Found target by address %s RSSI=%d", mac_address, rssi);
-                    } else {
-                        ESP_LOGE(BLE_LOGGING_TAG, "Unknown BLE tag found with address: %s", mac_address);
                     }
                     break;
                 case ESP_GAP_SEARCH_INQ_CMPL_EVT:
-                    // scan completed
-                    ESP_LOGI(BLE_LOGGING_TAG, "Scan complete. found_device=%d rssi=%d", found_device, found_rssi);
-                    xSemaphoreGive(scan_done_sem);
+                    handle_scan_complete();
                     break;
             }
     }
@@ -69,7 +69,7 @@ bool check_ble_near() {
     esp_ble_gap_start_scanning(SCAN_DURATION_SECONDS);
 
     // Wait for scan to finish (scan_done_sem signaled in callback)
-    if (xSemaphoreTake(scan_done_sem, (SCAN_DURATION_SECONDS + 2) * 1000 / portTICK_PERIOD_MS) == pdTRUE) {
+    if (xSemaphoreTake(scan_done_sem, (SCAN_DURATION_SECONDS + 1) * 1000 / portTICK_PERIOD_MS) == pdTRUE) {
         if (found_device) {
             if (found_rssi >= RSSI_NEAR_THRESHOLD) {
                 ESP_LOGI(BLE_LOGGING_TAG, "Device is near (RSSI >= %d)", RSSI_NEAR_THRESHOLD);
@@ -82,6 +82,7 @@ bool check_ble_near() {
         }
     } else {
         ESP_LOGE(BLE_LOGGING_TAG, "Timeout waiting for BLE scan to complete");
+        xSemaphoreGive(scan_done_sem);
     }
     return false;
 }
@@ -114,6 +115,7 @@ void ble_init() {
         ESP_LOGE(BLE_LOGGING_TAG, "Failed to create semaphore");
         return;
     }
+    ESP_LOGI(BLE_LOGGING_TAG, "Semaphore created successfully");
 
     static esp_ble_scan_params_t ble_scan_params = {
         .scan_type = BLE_SCAN_TYPE_ACTIVE,
