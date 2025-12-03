@@ -6,7 +6,7 @@
 #include "esp_mac.h"
 #include "main.h"
 
-static void addr_to_str(const uint8_t *addr, char *out, size_t out_len) {
+void addr_to_str(const uint8_t *addr, char *out, size_t out_len) {
     snprintf(out, out_len, "%02x:%02x:%02x:%02x:%02x:%02x", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
 }
 
