@@ -25,6 +25,7 @@
 #include "gauge.h"
 #include "controlflow.h"
 #include "ext_clock.h"
+#include "ble_tag.h"
 #include "periodic_wakeup_timer.h"
 
 
@@ -149,6 +150,12 @@ int addPIREvent(void) {
   ESP_LOGI("progress", "Logging PIR event...");
 
   time_t now = get_time_ext_clock();
+
+  // Check if BLE tag is near
+  if(!check_ble_near()) {
+    ESP_LOGI("INFO", "BLE tag not near, ignoring PIR event.");
+    return 0;
+  }
 
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
