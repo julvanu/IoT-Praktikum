@@ -52,6 +52,7 @@ void handle_corridor() {
             while (gpio_get_level(DOOR_PIN)==1){
                 vTaskDelay(pdMS_TO_TICKS(1000));
             }
+            ESP_LOGI("INFO", "Door to closed.");
         }
         // MQTT: send door data
         time_t time_closed = get_time_ext_clock();
