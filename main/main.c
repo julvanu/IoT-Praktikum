@@ -21,6 +21,7 @@
 #include "device_handling.h"
 #include "ext_clock.h"
 #include "ble_tag.h"
+#include "periodic_wakeup_timer.h"
 
 
 void app_main() {
@@ -36,7 +37,7 @@ void app_main() {
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
   if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0 || wakeup_cause == ESP_SLEEP_WAKEUP_EXT1)  {
-    ESP_LOGI("INFO", "External wakeup trigger");
+    ESP_LOGI("INFO", "External wakeup trigger\n");
     ble_init();
 
     if (device_id == 1) {
@@ -49,6 +50,11 @@ void app_main() {
       // ---------------- DEVICE: kitchen ------------------------------
       handle_kitchen();
     }
+    
+    continue_periodic_wakeup_timer(device_id);
+  } else if (wakeup_cause == ESP_SLEEP_WAKEUP_TIMER) {
+    ESP_LOGI("INFO", "Timer wakeup trigger\n");
+    continue_periodic_wakeup_timer(device_id);
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
     device_id = flash_init();
   }

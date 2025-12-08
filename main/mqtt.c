@@ -26,6 +26,7 @@
 #include "controlflow.h"
 #include "ext_clock.h"
 #include "ble_tag.h"
+#include "periodic_wakeup_timer.h"
 
 
 
@@ -123,22 +124,26 @@ void sendToMQTT(char msg[], int size) {
 }
 
 // sends PIR events for all timestamps in pir_event_times to MQTT, then resets pir_event_idx to zero
-void sendPIREvents(char roomID[]) {  
-  char msg[1500];
-  snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
-  ESP_LOGI("INFO", "roomID: %s", roomID);
+void sendPIREvents(char roomID[]) {
+  if(pir_event_idx > 0) {
+    char msg[1500];
+    snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"PIR\",\"values\":[");
+    ESP_LOGI("INFO", "roomID: %s", roomID);
 
-  for (int i = 0; i < pir_event_idx; i++)
-  {
+    for (int i = 0; i < pir_event_idx; i++)
+    {
+      size_t len = strlen(msg);
+      snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i] * 1000, roomID);
+    }
     size_t len = strlen(msg);
-    snprintf(msg + len, sizeof(msg) - len, "{\"timestamp\":%llu, \"roomID\":\"%s\"},", pir_event_times[i] * 1000, roomID);
-  }
-  size_t len = strlen(msg);
-  // NOTE: "len - 1" to remove the last comma in message
-  snprintf(msg + len - 1, sizeof(msg) - len, "]}]}"); 
+    // NOTE: "len - 1" to remove the last comma in message
+    snprintf(msg + len - 1, sizeof(msg) - len, "]}]}"); 
 
-  sendToMQTT(msg, strlen(msg));
-  pir_event_idx = 0;
+    sendToMQTT(msg, strlen(msg));
+    pir_event_idx = 0;
+  }
+  // Reset periodic wakeup timer
+  reset_periodic_wakeup_timer();
 }
 
 // saves the timestamp of the current PIR event to pir_event_times
@@ -150,16 +155,16 @@ int addPIREvent(void) {
 
   // Check if BLE tag is near
   if(!check_ble_near()) {
-    ESP_LOGI("INFO", "BLE tag not near, ignoring PIR event.");
+    ESP_LOGI("INFO", "BLE tag not near, ignoring PIR event.\n");
     return 0;
   }
 
   pir_event_times[pir_event_idx] = now;
   pir_event_idx += 1; 
-  ESP_LOGI("INFO", "Loggend PIR event. PIR event index: %d\n", pir_event_idx);
+  ESP_LOGI("INFO", "Logged PIR event. PIR event index: %d\n", pir_event_idx);
 
   if (pir_event_idx == MAX_PIR_EVENTS) {
-    ESP_LOGI("INFO", "Max PIR events reached\n");
+    ESP_LOGI("INFO", "Max PIR events reached");
     return 1;
   }
   return 0;
@@ -180,4 +185,13 @@ void sendDoorEventToMQTT(time_t time, char eventType[]) {
 
   int size = snprintf(msg, sizeof(msg), "{\"sensors\":[{\"name\":\"door\",\"values\":[{\"timestamp\":%llu, \"eventType\":\"%s\"}]}]}", time * 1000, eventType);
   sendToMQTT(msg, size);
+}
+
+void send_periodic_data(int device_id) {
+    initialize_data_transfer();
+    sendPIREvents(get_device_name_by_id(device_id));
+    if (device_id == 1) {
+      sendBatteryStatusToMQTT();
+    }
+    reset_periodic_wakeup_timer();
 }

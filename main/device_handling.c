@@ -24,7 +24,7 @@ void handle_corridor() {
 
     uint64_t wakeup_mask=esp_sleep_get_ext1_wakeup_status();
     if ((wakeup_mask & (1ULL<<PIR_PIN)) !=0) {
-        ESP_LOGI("INFO", "WAKE UP: Due to PIR event.");
+        ESP_LOGI("INFO", "WAKE UP: Due to PIR event.\n");
         
         int reached_max_events = addPIREvent();
         if(reached_max_events) {
@@ -38,8 +38,10 @@ void handle_corridor() {
         }
 
     } else {
-        ESP_LOGI("INFO", "WAKE UP: Due to opened door.");
+        ESP_LOGI("INFO", "WAKE UP: Due to opened door.\n");
         time_t time_opened = get_time_ext_clock();
+        
+        // No BLE check, as door opening always provides useful information (social meetings, visits/check-ups from relatives or medical staff)
         setup_door();
         initialize_data_transfer();
         // MQTT: send door data

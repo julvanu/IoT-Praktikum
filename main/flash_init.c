@@ -9,9 +9,10 @@
 #include "identify_device.h"
 #include "sensor_setup.h"
 #include "initialize.h"
+#include "periodic_wakeup_timer.h"
 
 int flash_init() {
-    ESP_LOGI("INFO", "FLASH wakeup");
+    ESP_LOGI("INFO", "FLASH wakeup\n");
 
     int device_id = identify_device();
     if(atoi(DEVICE_ID) != device_id) {
@@ -42,6 +43,9 @@ int flash_init() {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", device_id);
         abort();
     }
+    
+    init_periodic_wakeup_timer();
+
     ESP_LOGI("INFO", "Setup complete");
 
     return device_id;
