@@ -1,2 +1,5 @@
 /.vscode
+/.idea
 /build
+/scripts/venv/
+/scripts/requirements.lock
