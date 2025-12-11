@@ -9,9 +9,11 @@ This script demonstrates:
   - Writing results back to InfluxDB
 """
 
-from influxdb_client import InfluxDBClient, Point, WriteOptions
+from influxdb_client import InfluxDBClient
 import pandas as pd
 from datetime import timedelta
+
+from influxdb_client.client.write_api import SYNCHRONOUS
 
 # ============================================================
 # 1. CONFIGURATION
@@ -54,7 +56,7 @@ def get_client():
 # ============================================================
 # 3. QUERY DATA FROM INFLUXDB
 # ============================================================
-def query_data(device_id=1, range_in_hours=6):
+def query_data(device_id=1,  start=None, stop=None, range_in_hours=None):
     query_api = client.query_api()
     MEASUREMENT_PIR = "PIR"
 
@@ -68,19 +70,24 @@ def query_data(device_id=1, range_in_hours=6):
         print("Unknown device ID.")
         return
 
-    # query = f'''
-    #     from(bucket: "{bucket}")
-    #       |> range(start: -{range_in_hours}h)
-    #       |> filter(fn: (r) => r["_measurement"] == "{MEASUREMENT_PIR}")
-    #       |> keep(columns: ["_time", "_value", "_field", "_measurement"])
-    # '''
-
-    query = f'''
-           from(bucket: "{bucket}")
-             |> range(start: 2025-12-02T00:00:00Z, stop: 2025-12-08T23:59:59Z)
-             |> filter(fn: (r) => r["_measurement"] == "{MEASUREMENT_PIR}")
-             |> keep(columns: ["_time", "_value", "_field", "_measurement"])
-       '''
+    if start is not None and stop is not None:
+        query = f'''
+               from(bucket: "{bucket}")
+                 |> range(start: {start}, stop: {stop})
+                 |> filter(fn: (r) => r["_measurement"] == "{MEASUREMENT_PIR}")
+                 |> keep(columns: ["_time", "_value", "_field", "_measurement"])
+           '''
+       ###### |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value") ############
+    elif range_in_hours is not None:
+        query = f'''
+            from(bucket: "{bucket}")
+              |> range(start: -{range_in_hours}h)
+              |> filter(fn: (r) => r["_measurement"] == "{MEASUREMENT_PIR}")
+              |> keep(columns: ["_time", "_value", "_field", "_measurement"])
+        '''
+    else:
+        print("You need to provide either start and stop time or a range in hours.")
+        return pd.DataFrame({})
 
     print("Running query...")
     df = query_api.query_data_frame(query)
@@ -94,7 +101,7 @@ def query_data(device_id=1, range_in_hours=6):
 
 
 # ============================================================
-# 4. ANALYZE DATA (EXAMPLE: COMPUTE MEAN)
+# 4. PROCESS DATA
 # ============================================================
 def add_to_df(df, start_time, latest_time, room):
     duration = pd.Timedelta(seconds=0) if latest_time is None else latest_time - start_time
@@ -153,7 +160,7 @@ def write_results(df_stays: pd.DataFrame):
     # Set the timestamp column as index — InfluxDB uses the index as time
     df_stays = df_stays.set_index("start_time")
 
-    write_api = client.write_api()
+    write_api = client.write_api(write_options=SYNCHRONOUS)
 
     print("\nData is ready to be written into DB:")
     print(df_stays)
@@ -177,9 +184,11 @@ if __name__ == "__main__":
     client = get_client()
 
     device_id = 1
-    range_in_hours = 6
+    # range_in_hours = 6
+    start = "2025-12-01T00:00:00Z"
+    stop = "2025-12-08T23:59:59Z"
 
-    df = query_data(device_id=device_id, range_in_hours=range_in_hours)
+    df = query_data(device_id=device_id, start=start, stop=stop)
     print(f"\nFound {df.shape[0]} rows of data")
     df_stays = analyze_stays(df)
     write_results(df_stays)
