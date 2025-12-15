@@ -26,6 +26,16 @@
 // #define DEVICE_TOPIC               "1/4/data"
 // #define DEVICE_KEY                 "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjI5NzgwMzUsImlzcyI6ImlvdHBsYXRmb3JtIiwic3ViIjoiMS80In0.n3Cs1H3lh9LNxqNvEOQuDV7lfJS4cc4P7tdkzozhoiQl2g5Gel5T5UyZ3bu0YNJH6gJMqO0U3UH1Qdssh4ymK80TNNRfsad0s0NMe6VZuju_Y2E-Ignke9-JPQ4xxh73t6LAcpUuoVbxT7TrWPagX_mx431O-Nk50VwHFo5kLneUl-dOMz3tWcPVtKjgx2KHcSMemWSPwYa-CBTBt8z2pJtiCETK5iGZRzn6t-ENiCG1TfCipNh517irhrSJQpO3b1gSlxoSmZ3qdUg3QAqKzNGU1K-v4NrVTylfuXQwkTVkHJ5kkQ8QStXmEViap4tLhA3EC0uobx-rZccn0jeZTRZJjUEgUcxb6jdvkDjecW2QygQEeOH_ztk2aimys7S9rGc03W9HDVu_o-ghOmZNX5twBBKAi6cp0arohJ8hbhBdiZWr1DEC_Jmmx6XL9t_53sPl6aQUF_4mC_SPvlzaAohg4U9GDwZUFw322jc8VNQm58Cq0t7GMRlfXvKbF-qXkayUBiQp7qIEPdvIjcM90tBH2lWQM6cdr5wJrksCoU8EHJd-_cbb_DSVagy3eVkBb-iMXyl7pdNPNVqs9aLigRWW0mkTHQXSqvZ7L16TdQvZACJdpAhohdPZeZirZP7__NSaSx5HSmO4VAwgyOfWe7BZbi90cx41SbajmwGXOU4"
 
+// DEVICE: livingroom
+// #define DEVICE_ID                  "5"
+// #define DEVICE_TOPIC               "1/5/data"
+// #define DEVICE_KEY                 "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjU4MDk5MTUsImlzcyI6ImlvdHBsYXRmb3JtIiwic3ViIjoiMS81In0.pLlQXXqecQTkqUgIYfzbS0003wYv74NYrT_IAhMS5_m8gvpp1dTeQyzo5qx_HS7NEas9mpY2gmvHyUkMoubCNiGTy_hMfPrFYpExkF8Q2WDrbQ7zGwb3jLBSG7G3NbN1dYKox0iPepZny2wt5sfchxrK7LV6y3P0rt_xFNAaVNzo17vahbBTSNaWasz8ubdeq9Xw_mZFi4pkMT9TAzl-AhyhemHg_1QGI4YpmAJd8Rnr9HngpQjs8M3ZDS-L0-e945danYplY5t7izQjhZVzwc6mPVDZs9s0V4NoPUManDlRuBvFca0AI7IYkNjt14XbeUa3qo7HuZM3F5xmrkj0RgYsgLoWouvdCm9KKRqxWzPqtnSF9vbX0NYNnnAHbjk5nIoiRuLLU5mj4e5ZbRHs80v2fYHittSoqJTwHMD6RkHLDikidpj8dnz_Lb7BvtRnF5s1ODoGPdCdDF_ZYZn4G5turgxcW0NoYxqdv-gU9d2W9G1ACq6Q_c8t5d8K1Tc0VRkEXid9zBrQamLHMFstp4CGKqWhfqmGG3w8bTTyHEee70NjjTD8gcuZSfXl1Icx1h816oLrgwIsdvyFZBkv9KC5j_lIYWNRmO03l3vNNEzkGbyM2Dymo9uOxhhWXnKlEUh9oyqdDTPu2jVQOPTleiST_PdAwPMEWKIUVtvMh0Q"
+
+// DEVICE: bedroom
+// #define DEVICE_ID                  "6"
+// #define DEVICE_TOPIC               "1/6/data"
+// #define DEVICE_KEY                 "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjU4MDk5MzAsImlzcyI6ImlvdHBsYXRmb3JtIiwic3ViIjoiMS82In0.Oy_lY9eeLbgWYqr7d6efcCkPhJYWqWGQMwFfEkDoUBIAHC7cI1Hh3XhH6787WsxdCNu1-Yw_wrs2vDnsvEx0FzNMFlnsu9EXlJtgYztRtq_xhnEzCXQ5vAJ-2rhwbYcdetqoOzs6Yn4VtCrx47p_U9IQCWgfWrVWAolvl8hmClnO1kSPb5fmvZzgjIEjTMmajxh8ObpYIAoeiU0ScTJtsEeodzxW4_90nvLVxR83wiyM7EALEX7WkhK_SIigKikG614zF4lwSF-GUP6_amQFxo4XtM_0yu-SiOQaJRqkW_ts-XJe7tUgqu0AEg9ZM27IgQrY4zJXRwYCLyOCFJkyfL08H8DN26N8RAjzZMTboIDOqKx92o4iyVYQAhcT5gtLxVLlNcLdjy-atjeHg4T-vRG_JBYOqP428ganhOnB1GFfhfeHFYlmJr6b1tNGQoAveiWMZcOS3GV1R_WWnfPRnPST81JpHITWMouie4W5m-RDvlvOjwW6L6jTGx8Z0-foiK7vtO9zzVa4cNobkdzgksHJg8wsMVAXzXG6prrIx-82f2CA4ejWPAtmwPpkVeiZc9zX2khPCSaqcGH9c8TyR2gvNu7oX6dFXoQWcRgTsr-d9pMaOOngnS4R4sG6m5XQ12xFkl1IlYWZXJVMjFUkeNwN8oH7HH3rStP58E0MDeM"
+
 
 #define PIR_PIN 27 
 #define DOOR_PIN 32
@@ -33,6 +43,8 @@
 #define CLOCK_SCL_PIN 19
 #define CLOCK_SDA_PIN 18
 
-#define MAC_CORRIDOR "64:b7:08:6e:ae:bc"
-#define MAC_BATHROOM "94:b9:7e:54:d3:00"
-#define MAC_KITCHEN  "7c:9e:bd:d3:1b:38"
+#define MAC_CORRIDOR    "64:b7:08:6e:ae:bc"
+#define MAC_BATHROOM    "94:b9:7e:54:d3:00"
+#define MAC_KITCHEN     "7c:9e:bd:d3:1b:38"
+#define MAC_LIVINGROOM  "64:b7:08:6e:95:54"
+#define MAC_BEDROOM     "64:b7:08:6e:b6:74"

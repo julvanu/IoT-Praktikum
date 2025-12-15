@@ -171,6 +171,7 @@ int addPIREvent(void) {
 }
 
 void sendBatteryStatusToMQTT(void) {
+  ESP_LOGI("progress", "Sending battery status to MQTT");
   getRSOC();
   time_t now = get_time_ext_clock();
   char msg[150];

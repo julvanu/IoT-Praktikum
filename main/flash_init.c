@@ -29,16 +29,12 @@ int flash_init() {
         setup_PIR();
         setup_door();
         setup_ext1_any_wakeup();
-    } else if (device_id == 2) {
-        // DEVICE: bathroom
-        ESP_LOGI("INFO", "Sensor setup for DEVICE bathroom...");
+    } else if (device_id == 2 || device_id == 4 || device_id == 5 || device_id == 6) {
+        // DEVICE: bathroom | kitchen | livingroom | bedroom
+        char* roomID = get_device_name_by_id(device_id);
+        ESP_LOGI("INFO", "Sensor setup for DEVICE %s...", roomID);
         setup_PIR();
-        setup_ext0_PIR_wakeup();
-    } else if (device_id == 4){
-        // DEVICE: kitchen
-        ESP_LOGI("INFO", "Sensor setup for DEVICE kitchen...");
-        setup_PIR();
-        setup_ext0_PIR_wakeup();        
+        setup_ext0_PIR_wakeup();      
     } else {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", device_id);
         abort();
