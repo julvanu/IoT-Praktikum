@@ -27,6 +27,10 @@ int identify_device() {
       device_id = 2;
     } else if (0 == memcmp ( mac_address, MAC_KITCHEN, sizeof(mac_address) )) {
       device_id = 4;
+    } else if (0 == memcmp ( mac_address, MAC_LIVINGROOM, sizeof(mac_address) )) {
+      device_id = 5;
+    } else if (0 == memcmp ( mac_address, MAC_BEDROOM, sizeof(mac_address) )) {
+      device_id = 6;
     }
     return device_id;
 }
@@ -39,6 +43,10 @@ char* get_device_name_by_id(int device_id) {
             return "bathroom";
         case 4:
             return "kitchen";
+        case 5:
+            return "livingroom";
+        case 6:
+            return "bedroom";
         default:
             return NULL;
     }

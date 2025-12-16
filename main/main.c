@@ -41,14 +41,11 @@ void app_main() {
     ble_init();
 
     if (device_id == 1) {
-      // ---------------- DEVICE: corridor ------------------------------
+      // ---------------- DEVICE: corridor ---------------------------------------------------------------
       handle_corridor();
-    } else if (device_id == 2) {
-      // ---------------- DEVICE: bathroom ------------------------------
-      handle_bathroom();
-    } else if (device_id == 4) {
-      // ---------------- DEVICE: kitchen ------------------------------
-      handle_kitchen();
+    } else if (device_id == 2 || device_id == 4 || device_id == 5 || device_id == 6) {
+      // ---------------- DEVICE: bathroom | kitchen | livingroom | bedroom ------------------------------
+      handle_one_PIR(device_id);
     }
     
     continue_periodic_wakeup_timer(device_id);

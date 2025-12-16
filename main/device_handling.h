@@ -2,6 +2,4 @@
 
 void handle_corridor();
 
-void handle_bathroom();
-
-void handle_kitchen();
+void handle_one_PIR(int device_id);
