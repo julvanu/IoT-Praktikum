@@ -48,3 +48,5 @@
 #define MAC_KITCHEN     "7c:9e:bd:d3:1b:38"
 #define MAC_LIVINGROOM  "64:b7:08:6e:95:54"
 #define MAC_BEDROOM     "64:b7:08:6e:b6:74"
+
+#define WATCHDOG_TIMEOUT_MS 10000
