@@ -1,5 +1,9 @@
-idf_component_register(SRCS main.c wifi.c sntp.c mqtt.c gauge.c controlflow.c identify_device.c flash_init.c 
-                    initialize.c sensor_setup.c device_handling.c configPM.c ext_clock.c ble_tag.c periodic_wakeup_timer.c
-					EMBED_TXTFILES 
-                    INCLUDE_DIRS "."
-                    REQUIRES esp_event esp_wifi mqtt nvs_flash driver ds3231 lc709203f bt) 
+idf_component_register(
+    SRCS main.c mqtt.c watchdog.c wifi.c
+        hardware/ble_tag.c hardware/device_handling.c hardware/gauge.c hardware/identify_device.c
+        init/configPM.c init/flash_init.c init/initialize.c init/sensor_setup.c
+        time/ext_clock.c time/periodic_wakeup_timer.c time/sleep_minutes.c time/sntp.c
+    EMBED_TXTFILES 
+    INCLUDE_DIRS "." "hardware" "init" "time"
+    REQUIRES esp_event esp_wifi mqtt nvs_flash driver ds3231 lc709203f bt
+)
