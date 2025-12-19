@@ -10,12 +10,14 @@
 
 #define SLEEP_SEC 86400 // 24 hours
 static RTC_DATA_ATTR time_t last_data_submission;
+static RTC_DATA_ATTR int timer_initialized = 0;
+
 
 int get_seconds_since_last_submission() {
     time_t now = get_time_ext_clock();
-    int diff = (int) ceil(difftime(now, last_data_submission));  // TODO: subtract 1 hour to account for possible time drift ???
+    int diff = (int) ceil(difftime(now, last_data_submission));
 
-    ESP_LOGI("periodic_wakeup", "Seconds since last data submission: %d\nLast submission: %llu. Now: %llu\n", diff, last_data_submission*1000, now*1000);
+    ESP_LOGI("periodic_wakeup", "Seconds since init or last data submission: %d", diff);
     return diff;
 }
 
@@ -26,6 +28,10 @@ void reset_periodic_wakeup_timer() {
 
 // Installs wakeup timer for the remaining time. If the time is (almost) up, sends data immediately. 
 void continue_periodic_wakeup_timer(int device_id) {
+    if(!timer_initialized) {
+        init_periodic_wakeup_timer();
+        timer_initialized = 1;
+    }
     int seconds_since_last = get_seconds_since_last_submission();
     int sleep_time = SLEEP_SEC - seconds_since_last;
     if (sleep_time < 30) {
