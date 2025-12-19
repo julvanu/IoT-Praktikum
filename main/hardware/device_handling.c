@@ -18,6 +18,7 @@
 #include "sensor_setup.h"
 #include "time.h"
 #include "identify_device.h"
+#include "watchdog.h"
 
 void handle_open_door_event() {
     time_t time_opened = get_time_ext_clock();
@@ -30,6 +31,7 @@ void handle_open_door_event() {
     if (gpio_get_level(DOOR_PIN)==1) {
         ESP_LOGI("INFO", "Waiting on the door to close.");
         while (gpio_get_level(DOOR_PIN)==1){
+            reset_watchdog();
             vTaskDelay(pdMS_TO_TICKS(1000));
         }
         ESP_LOGI("INFO", "Door to closed.");

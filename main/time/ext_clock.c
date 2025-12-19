@@ -37,6 +37,8 @@ time_t get_time_ext_clock(void) {
     }
     // ESP_LOGI("INFO", "External clock: %04d-%02d-%02d %02d:%02d:%02d\n", time.tm_year + 1900, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
     
+    // setenv("TZ", "UTC", 1);
+    // tzset();
     time_t timestamp = mktime(&time);
     if (timestamp == -1) {
         ESP_LOGE("RTC", "Getting timestamp from external clock failed\n");

@@ -22,6 +22,7 @@
 #include "ext_clock.h"
 #include "ble_tag.h"
 #include "periodic_wakeup_timer.h"
+#include "watchdog.h"
 
 
 void app_main() {
@@ -29,10 +30,9 @@ void app_main() {
   static RTC_DATA_ATTR int device_id = 0;
 
   init_logging();
-
   initialize_nvs();
-  
   init_ext_clock();
+  initialize_watchdog();
 
   esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
