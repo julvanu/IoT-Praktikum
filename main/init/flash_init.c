@@ -39,9 +39,6 @@ int flash_init() {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", device_id);
         abort();
     }
-    
-    init_periodic_wakeup_timer();
-
     ESP_LOGI("INFO", "Setup complete");
 
     return device_id;

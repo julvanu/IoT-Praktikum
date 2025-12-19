@@ -9,6 +9,7 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "esp_sleep.h"
+#include "watchdog.h"
 
 void setup_PIR() {
     // enable PIN for PIR sensor
@@ -32,6 +33,7 @@ void setup_ext0_PIR_wakeup() {
 
     // So that PIR events are not spammed
     while (gpio_get_level(PIR_PIN)==1){
+        reset_watchdog();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
     ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(PIR_PIN, 1));
@@ -40,6 +42,7 @@ void setup_ext0_PIR_wakeup() {
 void setup_ext1_any_wakeup() {
     ESP_LOGI("progress", "Installing EXT1 wakeup");
     while (gpio_get_level(PIR_PIN)==1){
+        reset_watchdog();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
     ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(PIN_MASK,ESP_EXT1_WAKEUP_ANY_HIGH));
