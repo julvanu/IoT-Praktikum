@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-data-coarsening
+  namespace: default
+spec:
+  schedule: "0 2 * * *"   # Every day at 02:00
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: data-coarsening-container
+              image: julvanu/coarsen_data:2.1
+              env:
+                - name: TZ
+                  value: Europe/Berlin
