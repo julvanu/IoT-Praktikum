@@ -1,5 +1,0 @@
-influxdb-client
-pandas
-configparser
-datetime
-jupyter
