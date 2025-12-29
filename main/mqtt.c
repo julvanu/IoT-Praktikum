@@ -191,7 +191,7 @@ void sendDoorEventToMQTT(time_t time, char eventType[]) {
 void send_periodic_data(int device_id) {
     initialize_data_transfer();
     sendPIREvents(get_device_name_by_id(device_id));
-    if (device_id == 1) {
+    if (device_id == 1 || device_id == 5 || device_id == 6) {
       sendBatteryStatusToMQTT();
     }
     reset_periodic_wakeup_timer();
