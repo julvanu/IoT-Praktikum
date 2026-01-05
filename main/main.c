@@ -26,9 +26,6 @@
 
 
 void app_main() {
-  // 1 == corridor | 2 == bathroom
-  static RTC_DATA_ATTR int device_id = 0;
-
   init_logging();
   initialize_nvs();
   init_ext_clock();
@@ -40,20 +37,20 @@ void app_main() {
     ESP_LOGI("INFO", "External wakeup trigger\n");
     ble_init();
 
-    if (device_id == 1) {
+    if (ESP_DEVICE_ID == 1) {
       // ---------------- DEVICE: corridor ---------------------------------------------------------------
       handle_corridor();
-    } else if (device_id == 2 || device_id == 4 || device_id == 5 || device_id == 6) {
+    } else if (ESP_DEVICE_ID == 2 || ESP_DEVICE_ID == 4 || ESP_DEVICE_ID == 5 || ESP_DEVICE_ID == 6) {
       // ---------------- DEVICE: bathroom | kitchen | livingroom | bedroom ------------------------------
-      handle_one_PIR(device_id);
+      handle_one_PIR(ESP_DEVICE_ID);
     }
-    
-    continue_periodic_wakeup_timer(device_id);
+
+    continue_periodic_wakeup_timer(ESP_DEVICE_ID);
   } else if (wakeup_cause == ESP_SLEEP_WAKEUP_TIMER) {
     ESP_LOGI("INFO", "Timer wakeup trigger\n");
-    continue_periodic_wakeup_timer(device_id);
+    continue_periodic_wakeup_timer(ESP_DEVICE_ID);
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
-    device_id = flash_init();
+    flash_init();
   }
 
   ESP_LOGI("progress", "Going to sleep...");

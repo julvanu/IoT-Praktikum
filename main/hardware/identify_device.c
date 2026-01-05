@@ -5,14 +5,17 @@
 #include "esp_system.h"
 #include "esp_mac.h"
 #include "main.h"
+#include "identify_device.h"
+
+RTC_DATA_ATTR int ESP_DEVICE_ID = 0;
+RTC_DATA_ATTR char ESP_DEVICE_TOPIC[9] = "";
+RTC_DATA_ATTR char ESP_DEVICE_KEY[789] = "";
 
 void addr_to_str(const uint8_t *addr, char *out, size_t out_len) {
     snprintf(out, out_len, "%02x:%02x:%02x:%02x:%02x:%02x", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
 }
 
-int identify_device() {
-    int device_id = 0;
-    
+void identify_device() {    
     // MAC address retrieval
     ESP_LOGI("INFO", "Attempting to retrieve MAC-address...");
     unsigned char mac_base[6] = {0};
@@ -22,21 +25,34 @@ int identify_device() {
     ESP_LOGI("INFO", "MAC-address: %s", mac_address);
 
     if (0 == memcmp ( mac_address, MAC_CORRIDOR, sizeof(mac_address) )) {
-      device_id = 1;
+      ESP_DEVICE_ID = DEVICE_ID_CORRIDOR;
+      snprintf(ESP_DEVICE_TOPIC, sizeof(ESP_DEVICE_TOPIC), DEVICE_TOPIC_CORRIDOR);
+      snprintf(ESP_DEVICE_KEY, sizeof(ESP_DEVICE_KEY), DEVICE_KEY_CORRIDOR);
     } else if (0 == memcmp ( mac_address, MAC_BATHROOM, sizeof(mac_address) )) {
-      device_id = 2;
+      ESP_DEVICE_ID = DEVICE_ID_BATHROOM;
+      snprintf(ESP_DEVICE_TOPIC, sizeof(ESP_DEVICE_TOPIC), DEVICE_TOPIC_BATHROOM);
+      snprintf(ESP_DEVICE_KEY, sizeof(ESP_DEVICE_KEY), DEVICE_KEY_BATHROOM);
     } else if (0 == memcmp ( mac_address, MAC_KITCHEN, sizeof(mac_address) )) {
-      device_id = 4;
+      ESP_DEVICE_ID = DEVICE_ID_KITCHEN;
+      snprintf(ESP_DEVICE_TOPIC, sizeof(ESP_DEVICE_TOPIC), DEVICE_TOPIC_KITCHEN);
+      snprintf(ESP_DEVICE_KEY, sizeof(ESP_DEVICE_KEY), DEVICE_KEY_KITCHEN);
     } else if (0 == memcmp ( mac_address, MAC_LIVINGROOM, sizeof(mac_address) )) {
-      device_id = 5;
+      ESP_DEVICE_ID = DEVICE_ID_LIVINGROOM;
+      snprintf(ESP_DEVICE_TOPIC, sizeof(ESP_DEVICE_TOPIC), DEVICE_TOPIC_LIVINGROOM);
+      snprintf(ESP_DEVICE_KEY, sizeof(ESP_DEVICE_KEY), DEVICE_KEY_LIVINGROOM);
     } else if (0 == memcmp ( mac_address, MAC_BEDROOM, sizeof(mac_address) )) {
-      device_id = 6;
+      ESP_DEVICE_ID = DEVICE_ID_BEDROOM;
+      snprintf(ESP_DEVICE_TOPIC, sizeof(ESP_DEVICE_TOPIC), DEVICE_TOPIC_BEDROOM);
+      snprintf(ESP_DEVICE_KEY, sizeof(ESP_DEVICE_KEY), DEVICE_KEY_BEDROOM);
+    } else {
+      ESP_LOGE("ERROR", "System abort due to not recognized MAC-address!");
+      abort();
     }
-    return device_id;
+    return;
 }
 
-char* get_device_name_by_id(int device_id) {
-    switch (device_id) {
+char* get_device_name_by_id() {
+    switch (ESP_DEVICE_ID) {
         case 1:
             return "corridor";
         case 2:

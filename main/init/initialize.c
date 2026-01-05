@@ -22,8 +22,6 @@ void initialize() {
 
   ESP_LOGI("progress", "Starting Clock");
   start_clock();
-
-  // TODO: SNTP => sync external clock
 }
 
 void initialize_data_transfer() {

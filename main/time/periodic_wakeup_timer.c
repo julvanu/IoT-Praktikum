@@ -27,7 +27,7 @@ void reset_periodic_wakeup_timer() {
 }
 
 // Installs wakeup timer for the remaining time. If the time is (almost) up, sends data immediately. 
-void continue_periodic_wakeup_timer(int device_id) {
+void continue_periodic_wakeup_timer() {
     if(!timer_initialized) {
         init_periodic_wakeup_timer();
         timer_initialized = 1;
@@ -36,7 +36,7 @@ void continue_periodic_wakeup_timer(int device_id) {
     int sleep_time = SLEEP_SEC - seconds_since_last;
     if (sleep_time < 30) {
         ESP_LOGI("periodic_wakeup", "Almost 24 hours since last data submission, sending data now.");
-        send_periodic_data(device_id);
+        send_periodic_data();
         sleep_time = SLEEP_SEC;
     }
     ESP_LOGI("periodic_wakeup", "Continuing periodic wakeup timer for %d more seconds.\n", sleep_time);

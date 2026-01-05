@@ -27,6 +27,7 @@
 #include "ext_clock.h"
 #include "ble_tag.h"
 #include "periodic_wakeup_timer.h"
+#include "identify_device.h"
 
 
 
@@ -94,7 +95,7 @@ void start_mqtt(void) {
   mqtt_cfg.session.protocol_ver = MQTT_PROTOCOL_V_3_1_1;
   mqtt_cfg.credentials.username = "JWT";
   mqtt_cfg.network.timeout_ms = 30000;
-  mqtt_cfg.credentials.authentication.password = DEVICE_KEY;
+  mqtt_cfg.credentials.authentication.password = ESP_DEVICE_KEY;
 
   ESP_LOGI("mqtt", "[APP] Free memory: %d bytes", esp_get_free_heap_size());
   mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
@@ -114,8 +115,8 @@ void start_mqtt(void) {
 }
 
 void sendToMQTT(char msg[], int size) {
-  ESP_LOGI("mqtt", "Sending <%s> to topic %s", msg, DEVICE_TOPIC);
-  auto err = esp_mqtt_client_publish(mqtt_client, DEVICE_TOPIC, msg, size, 1, 0);
+  ESP_LOGI("mqtt", "Sending <%s> to topic %s", msg, ESP_DEVICE_TOPIC);
+  auto err = esp_mqtt_client_publish(mqtt_client, ESP_DEVICE_TOPIC, msg, size, 1, 0);
   if (err == -1) {
     printf("Error while publishing to mqtt\n");
     ESP_LOGI("functions", "SendToMqttFunction terminated");
@@ -188,10 +189,10 @@ void sendDoorEventToMQTT(time_t time, char eventType[]) {
   sendToMQTT(msg, size);
 }
 
-void send_periodic_data(int device_id) {
+void send_periodic_data() {
     initialize_data_transfer();
-    sendPIREvents(get_device_name_by_id(device_id));
-    if (device_id == 1 || device_id == 5 || device_id == 6) {
+    sendPIREvents(get_device_name_by_id());
+    if (ESP_DEVICE_ID == 1 || ESP_DEVICE_ID == 5 || ESP_DEVICE_ID == 6) {
       sendBatteryStatusToMQTT();
     }
     reset_periodic_wakeup_timer();

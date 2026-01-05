@@ -1,3 +1,3 @@
 #pragma once
 
-int flash_init();
+void flash_init();

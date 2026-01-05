@@ -74,8 +74,8 @@ void handle_corridor() {
     setup_ext1_any_wakeup();
 }
 
-void handle_one_PIR(int device_id) {
-    char* roomID = get_device_name_by_id(device_id);
+void handle_one_PIR() {
+    char* roomID = get_device_name_by_id();
     ESP_LOGI("INFO", "DEVICE: %s", roomID);
     int reached_max_events = addPIREvent();
     if(reached_max_events) {
@@ -83,7 +83,7 @@ void handle_one_PIR(int device_id) {
         // MQTT: send all logged PIR data
         sendPIREvents(roomID);
 
-        if(device_id == 5 || device_id == 6) { // livingroom or bedroom
+        if(ESP_DEVICE_ID == 5 || ESP_DEVICE_ID == 6) { // livingroom or bedroom
             sendBatteryStatusToMQTT();
         }
     }
