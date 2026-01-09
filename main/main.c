@@ -23,15 +23,17 @@
 #include "ble_tag.h"
 #include "periodic_wakeup_timer.h"
 #include "watchdog.h"
+#include "configPM.h"
 
 
 void app_main() {
+  esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
+  configPM(160, 160, true); //max_freq_mhz, min_freq_mhz, automatic_light_sleep_enable
+
   init_logging();
   initialize_nvs();
   init_ext_clock();
   initialize_watchdog();
-
-  esp_sleep_wakeup_cause_t wakeup_cause = esp_sleep_get_wakeup_cause();
 
   if (wakeup_cause == ESP_SLEEP_WAKEUP_EXT0 || wakeup_cause == ESP_SLEEP_WAKEUP_EXT1)  {
     ESP_LOGI("INFO", "External wakeup trigger\n");
