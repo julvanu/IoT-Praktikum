@@ -4,6 +4,4 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 
-
-
-void start_wifi(void);
+int start_wifi(void);

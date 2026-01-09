@@ -71,7 +71,6 @@ void handle_corridor() {
         ESP_LOGI("INFO", "WAKE UP: Due to opened door.\n");
         handle_open_door_event();
     }
-    setup_ext1_any_wakeup();
 }
 
 void handle_one_PIR() {
@@ -87,5 +86,15 @@ void handle_one_PIR() {
             sendBatteryStatusToMQTT();
         }
     }
-    setup_ext0_PIR_wakeup();
+}
+
+void install_sensor_wakeup() {
+    if (ESP_DEVICE_ID == 1) {
+        // DEVICE: corridor
+        setup_ext1_any_wakeup();
+    } else if (ESP_DEVICE_ID == 2 || ESP_DEVICE_ID == 4 || ESP_DEVICE_ID == 5 || ESP_DEVICE_ID == 6) {
+        // DEVICE: bathroom | kitchen | livingroom | bedroom
+        setup_ext0_PIR_wakeup();      
+    }
+    ESP_LOGI("progress", "Installed sensor wakeup.\n");
 }

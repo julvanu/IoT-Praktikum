@@ -52,6 +52,7 @@ void app_main() {
   } else { // ESP_SLEEP_WAKEUP_UNDEFINED => flash
     flash_init();
   }
+  install_sensor_wakeup();
 
   ESP_LOGI("progress", "Going to sleep...");
   esp_deep_sleep_start();

@@ -24,13 +24,11 @@ void flash_init() {
         ESP_LOGI("INFO", "Sensor setup for DEVICE corridor...");
         setup_PIR();
         setup_door();
-        setup_ext1_any_wakeup();
     } else if (ESP_DEVICE_ID == 2 || ESP_DEVICE_ID == 4 || ESP_DEVICE_ID == 5 || ESP_DEVICE_ID == 6) {
         // DEVICE: bathroom | kitchen | livingroom | bedroom
         char* roomID = get_device_name_by_id();
         ESP_LOGI("INFO", "Sensor setup for DEVICE %s...", roomID);
         setup_PIR();
-        setup_ext0_PIR_wakeup();      
     } else {
         ESP_LOGE("ERROR", "Unknown device detected. The function identify_device returned device_id %d.", ESP_DEVICE_ID);
         abort();

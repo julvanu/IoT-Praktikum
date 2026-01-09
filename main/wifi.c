@@ -39,7 +39,9 @@ static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_
   }
 }
 
-void start_wifi(void) {
+// Return 1 on success, 0 if connection failed
+int start_wifi(void) {
+  int success = 0;
   s_wifi_event_group = xEventGroupCreate();
 
   ESP_ERROR_CHECK(esp_netif_init());
@@ -75,18 +77,18 @@ void start_wifi(void) {
   /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
    * happened. */
   if (bits & WIFI_CONNECTED_BIT) {
-    ESP_LOGI("wifi", "connected");
+    ESP_LOGI("progress", "Connected to WiFi.");
+    success = 1;
   } else {
     if (bits & WIFI_FAIL_BIT) {
-      ESP_LOGI("wifi", "Failed to connect");
+      ESP_LOGI("progress", "Failed to connect to WiFi.");
     } else {
-      ESP_LOGE("wifi", "UNEXPECTED EVENT");
+      ESP_LOGE("error", "Unexpected event while connecting to WiFi.");
     }
-    sleep_minutes(30);
-    // esp_restart();
   }
 
   ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler));
   ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler));
   vEventGroupDelete(s_wifi_event_group);
+  return success;
 }

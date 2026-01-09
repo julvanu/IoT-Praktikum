@@ -4,7 +4,7 @@
 #include "esp_event.h"
 #include "time.h"
 
-void start_mqtt(void);
+int start_mqtt(void);
 // void addPIREventToMQTT(char msg[], char roomID[]);
 void sendPIREvents(char roomID[]);
 int addPIREvent(void);

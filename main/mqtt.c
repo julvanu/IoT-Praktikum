@@ -87,7 +87,8 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
   }
 }
 
-void start_mqtt(void) {
+// Return 1 on success, 0 if connection failed
+int start_mqtt(void) {
   esp_mqtt_client_config_t mqtt_cfg = {};
   mqtt_cfg.broker.address.hostname = MQTT_BROKER;
   mqtt_cfg.broker.address.port = 1883;
@@ -108,9 +109,10 @@ void start_mqtt(void) {
   EventBits_t bits = xEventGroupWaitBits(mqtt_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
   if (bits & CONNECTED_BIT) {
     ESP_LOGI("mqtt", "Connected to MQTT\n");
+    return 1;
   } else {
-    ESP_LOGI("mqtt", "Connection to MQTT failed. Going to sleep for 30 minutes, then try again.\n");
-    sleep_minutes(30);    
+    ESP_LOGI("mqtt", "Connection to MQTT failed\n");
+    return 0;
   }
 }
 

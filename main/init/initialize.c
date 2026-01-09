@@ -15,10 +15,12 @@
 #include "wifi.h"
 #include "esp_sleep.h"
 #include "ble_tag.h"
+#include "sleep_minutes.h"
 
 void initialize() { 
   ESP_LOGI("progress", "Starting Wifi");
-  start_wifi();
+  int wifi_connected = start_wifi();
+  ensure_wifi_connection(wifi_connected);
 
   ESP_LOGI("progress", "Starting Clock");
   start_clock();
@@ -28,10 +30,34 @@ void initialize_data_transfer() {
   ESP_LOGI("INFO", "Preparing to send data...");
   
   ESP_LOGI("progress", "Starting Wifi");
-  start_wifi();
+  int wifi_connected = start_wifi();
+  ensure_wifi_connection(wifi_connected);
 
   ESP_LOGI("progress", "Starting MQTT");
-  start_mqtt();
+  int mqtt_connected = start_mqtt();
+  ensure_mqtt_connection(mqtt_connected);
+}
+
+void ensure_wifi_connection(int wifi_connected) {
+  while (!wifi_connected) {
+    ESP_LOGI("progress", "Currently not connected to Wifi.");
+    int sleep_duration_minutes = 3;
+    ESP_LOGI("progress", "Sleeping for %d minute(s) before retrying Wifi connection...", sleep_duration_minutes);
+    sleep_minutes(sleep_duration_minutes);
+    ESP_LOGI("progress", "Starting Wifi (retry)");
+    wifi_connected = start_wifi();
+  }
+}
+
+void ensure_mqtt_connection(int mqtt_connected) {
+  while (!mqtt_connected) {
+    ESP_LOGI("progress", "Currently not connected to MQTT.");
+    int sleep_duration_minutes = 3;
+    ESP_LOGI("progress", "Sleeping for %d minute(s) before retrying MQTT connection...", sleep_duration_minutes);
+    sleep_minutes(sleep_duration_minutes);
+    ESP_LOGI("progress", "Starting MQTT (retry)");
+    mqtt_connected = start_mqtt();
+  }
 }
 
 void initialize_nvs() {
