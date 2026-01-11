@@ -32,17 +32,15 @@ void ensure_ext_clock_initialized(void) {
 time_t get_time_ext_clock(void) {
     ensure_ext_clock_initialized();
     struct tm time = { 0 };
+    // Get time from external clock
     if (ds3231_get_time(&dev, &time) != ESP_OK) {
-        ESP_LOGE("RTC", "Could not get time\n");
+        ESP_LOGE("error", "RTC: Could not get time\n");
     }
-    // ESP_LOGI("INFO", "External clock: %04d-%02d-%02d %02d:%02d:%02d\n", time.tm_year + 1900, time.tm_mon + 1, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
-    
-    // setenv("TZ", "UTC", 1);
-    // tzset();
+    // Set correct timezone for timestamp conversion
+    setenv("TZ", "CET-1CEST,M3.5.0/2,M10.5.0/3", 1);
+    tzset();
+    // Convert struct tm to time_t timestamp
     time_t timestamp = mktime(&time);
-    if (timestamp == -1) {
-        ESP_LOGE("RTC", "Getting timestamp from external clock failed\n");
-    } 
     return timestamp;
 }
 
